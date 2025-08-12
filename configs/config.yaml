@@ -5,6 +5,9 @@ server:
     grpc:
         addr: 0.0.0.0:9000
         timeout: 1s
+    mux:
+        addr: 0.0.0.0:8001
+        timeout: 1s
 data:
     database:
         driver: mysql

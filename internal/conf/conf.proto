@@ -21,8 +21,14 @@ message Server {
     string addr = 2;
     google.protobuf.Duration timeout = 3;
   }
+   message Mux {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
   HTTP http = 1;
   GRPC grpc = 2;
+  Mux mux = 3;
 }
 
 message Data {
