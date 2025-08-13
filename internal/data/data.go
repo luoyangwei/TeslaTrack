@@ -1,6 +1,7 @@
 package data
 
 import (
+	"os"
 	"teslatrack/internal/conf"
 	"teslatrack/internal/data/ent"
 
@@ -31,10 +32,24 @@ func NewData(c *conf.Data, logger log.Logger) (*Data, func(), error) {
 }
 
 func mustNewMysqlSqlClient(c *conf.Data, logger log.Logger) *ent.Client {
-	clt, err := ent.Open(c.Database.Driver, c.Database.Source)
+	helper := log.NewHelper(logger)
+
+	var databaseSource = os.Getenv("DATABASE_SOURCE")
+	if databaseSource == "" {
+		databaseSource = c.Database.Source
+	}
+
+	var databaseDriver = os.Getenv("DATABASE_DRIVER")
+	if databaseDriver == "" {
+		databaseDriver = c.Database.Driver
+	}
+
+	helper.Debugw("msg", "mysql connecting", "databaseDriver", databaseDriver, "databaseSource", databaseSource)
+	clt, err := ent.Open(databaseDriver, databaseSource)
 	if err != nil {
 		panic("must be new mysql client")
 	}
-	log.NewHelper(logger).Info("mysql connection success")
+
+	helper.Info("mysql connection success")
 	return clt
 }
