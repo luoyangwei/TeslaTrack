@@ -20,6 +20,18 @@ func (f AuthorizeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AuthorizeMutation", m)
 }
 
+// The AuthorizeTokenFunc type is an adapter to allow the use of ordinary
+// function as AuthorizeToken mutator.
+type AuthorizeTokenFunc func(context.Context, *ent.AuthorizeTokenMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AuthorizeTokenFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AuthorizeTokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AuthorizeTokenMutation", m)
+}
+
 // Condition is a hook condition function.
 type Condition func(context.Context, ent.Mutation) bool
 

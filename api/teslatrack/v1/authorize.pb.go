@@ -132,6 +132,87 @@ func (*CreateAuthorizeReply) Descriptor() ([]byte, []int) {
 	return file_teslatrack_v1_authorize_proto_rawDescGZIP(), []int{1}
 }
 
+type CallbackRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// callback code
+	Code          string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CallbackRequest) Reset() {
+	*x = CallbackRequest{}
+	mi := &file_teslatrack_v1_authorize_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CallbackRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CallbackRequest) ProtoMessage() {}
+
+func (x *CallbackRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_teslatrack_v1_authorize_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CallbackRequest.ProtoReflect.Descriptor instead.
+func (*CallbackRequest) Descriptor() ([]byte, []int) {
+	return file_teslatrack_v1_authorize_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CallbackRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+type CallbackReply struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CallbackReply) Reset() {
+	*x = CallbackReply{}
+	mi := &file_teslatrack_v1_authorize_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CallbackReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CallbackReply) ProtoMessage() {}
+
+func (x *CallbackReply) ProtoReflect() protoreflect.Message {
+	mi := &file_teslatrack_v1_authorize_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CallbackReply.ProtoReflect.Descriptor instead.
+func (*CallbackReply) Descriptor() ([]byte, []int) {
+	return file_teslatrack_v1_authorize_proto_rawDescGZIP(), []int{3}
+}
+
 var File_teslatrack_v1_authorize_proto protoreflect.FileDescriptor
 
 const file_teslatrack_v1_authorize_proto_rawDesc = "" +
@@ -142,9 +223,13 @@ const file_teslatrack_v1_authorize_proto_rawDesc = "" +
 	"\fclientSecret\x18\x02 \x01(\tR\fclientSecret\x12\x1c\n" +
 	"\tgrantType\x18\x03 \x01(\tR\tgrantType\x12 \n" +
 	"\vredirectURI\x18\x04 \x01(\tR\vredirectURI\"\x16\n" +
-	"\x14CreateAuthorizeReply2\x91\x01\n" +
+	"\x14CreateAuthorizeReply\"%\n" +
+	"\x0fCallbackRequest\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\tR\x04code\"\x0f\n" +
+	"\rCallbackReply2\x87\x02\n" +
 	"\tAuthorize\x12\x83\x01\n" +
-	"\x0fCreateAuthorize\x12).api.teslatrack.v1.CreateAuthorizeRequest\x1a'.api.teslatrack.v1.CreateAuthorizeReply\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/api/v1/authorizeB6\n" +
+	"\x0fCreateAuthorize\x12).api.teslatrack.v1.CreateAuthorizeRequest\x1a'.api.teslatrack.v1.CreateAuthorizeReply\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/api/v1/authorize\x12t\n" +
+	"\bCallback\x12\".api.teslatrack.v1.CallbackRequest\x1a .api.teslatrack.v1.CallbackReply\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/api/v1/authorize/callbackB6\n" +
 	"\x11api.teslatrack.v1P\x01Z\x1fteslatrack/api/teslatrack/v1;v1b\x06proto3"
 
 var (
@@ -159,16 +244,20 @@ func file_teslatrack_v1_authorize_proto_rawDescGZIP() []byte {
 	return file_teslatrack_v1_authorize_proto_rawDescData
 }
 
-var file_teslatrack_v1_authorize_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_teslatrack_v1_authorize_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_teslatrack_v1_authorize_proto_goTypes = []any{
 	(*CreateAuthorizeRequest)(nil), // 0: api.teslatrack.v1.CreateAuthorizeRequest
 	(*CreateAuthorizeReply)(nil),   // 1: api.teslatrack.v1.CreateAuthorizeReply
+	(*CallbackRequest)(nil),        // 2: api.teslatrack.v1.CallbackRequest
+	(*CallbackReply)(nil),          // 3: api.teslatrack.v1.CallbackReply
 }
 var file_teslatrack_v1_authorize_proto_depIdxs = []int32{
 	0, // 0: api.teslatrack.v1.Authorize.CreateAuthorize:input_type -> api.teslatrack.v1.CreateAuthorizeRequest
-	1, // 1: api.teslatrack.v1.Authorize.CreateAuthorize:output_type -> api.teslatrack.v1.CreateAuthorizeReply
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	2, // 1: api.teslatrack.v1.Authorize.Callback:input_type -> api.teslatrack.v1.CallbackRequest
+	1, // 2: api.teslatrack.v1.Authorize.CreateAuthorize:output_type -> api.teslatrack.v1.CreateAuthorizeReply
+	3, // 3: api.teslatrack.v1.Authorize.Callback:output_type -> api.teslatrack.v1.CallbackReply
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -185,7 +274,7 @@ func file_teslatrack_v1_authorize_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_teslatrack_v1_authorize_proto_rawDesc), len(file_teslatrack_v1_authorize_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

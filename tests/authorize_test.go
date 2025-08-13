@@ -37,7 +37,7 @@ func TestCreateAuthorize(t *testing.T) {
 		ClientId:     os.Getenv("TESLA_CLIENT_ID"),
 		ClientSecret: os.Getenv("TESLA_CLIENT_SECRET"),
 		GrantType:    "authorization_code",
-		RedirectURI:  "https://teslatrack.luoyangwei.cn/authorize/callback",
+		RedirectURI:  "https://teslatrack.luoyangwei.cn/api/v1/authorize/callback",
 	}
 
 	request, _ := json.Marshal(body)

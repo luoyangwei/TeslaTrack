@@ -4,6 +4,7 @@ package ent
 
 import (
 	"teslatrack/internal/data/ent/authorize"
+	"teslatrack/internal/data/ent/authorizetoken"
 	"teslatrack/internal/data/ent/schema"
 	"time"
 )
@@ -28,4 +29,18 @@ func init() {
 	authorizeDescDeleted := authorizeFields[6].Descriptor()
 	// authorize.DefaultDeleted holds the default value on creation for the deleted field.
 	authorize.DefaultDeleted = authorizeDescDeleted.Default.(bool)
+	authorizetokenFields := schema.AuthorizeToken{}.Fields()
+	_ = authorizetokenFields
+	// authorizetokenDescCreatedAt is the schema descriptor for created_at field.
+	authorizetokenDescCreatedAt := authorizetokenFields[6].Descriptor()
+	// authorizetoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	authorizetoken.DefaultCreatedAt = authorizetokenDescCreatedAt.Default.(func() time.Time)
+	// authorizetokenDescUpdatedAt is the schema descriptor for updated_at field.
+	authorizetokenDescUpdatedAt := authorizetokenFields[7].Descriptor()
+	// authorizetoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	authorizetoken.DefaultUpdatedAt = authorizetokenDescUpdatedAt.Default.(func() time.Time)
+	// authorizetokenDescDeleted is the schema descriptor for deleted field.
+	authorizetokenDescDeleted := authorizetokenFields[8].Descriptor()
+	// authorizetoken.DefaultDeleted holds the default value on creation for the deleted field.
+	authorizetoken.DefaultDeleted = authorizetokenDescDeleted.Default.(bool)
 }

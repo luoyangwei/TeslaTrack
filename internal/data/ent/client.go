@@ -12,6 +12,7 @@ import (
 	"teslatrack/internal/data/ent/migrate"
 
 	"teslatrack/internal/data/ent/authorize"
+	"teslatrack/internal/data/ent/authorizetoken"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -25,6 +26,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Authorize is the client for interacting with the Authorize builders.
 	Authorize *AuthorizeClient
+	// AuthorizeToken is the client for interacting with the AuthorizeToken builders.
+	AuthorizeToken *AuthorizeTokenClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -37,6 +40,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Authorize = NewAuthorizeClient(c.config)
+	c.AuthorizeToken = NewAuthorizeTokenClient(c.config)
 }
 
 type (
@@ -127,9 +131,10 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:       ctx,
-		config:    cfg,
-		Authorize: NewAuthorizeClient(cfg),
+		ctx:            ctx,
+		config:         cfg,
+		Authorize:      NewAuthorizeClient(cfg),
+		AuthorizeToken: NewAuthorizeTokenClient(cfg),
 	}, nil
 }
 
@@ -147,9 +152,10 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:       ctx,
-		config:    cfg,
-		Authorize: NewAuthorizeClient(cfg),
+		ctx:            ctx,
+		config:         cfg,
+		Authorize:      NewAuthorizeClient(cfg),
+		AuthorizeToken: NewAuthorizeTokenClient(cfg),
 	}, nil
 }
 
@@ -179,12 +185,14 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Authorize.Use(hooks...)
+	c.AuthorizeToken.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Authorize.Intercept(interceptors...)
+	c.AuthorizeToken.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -192,6 +200,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AuthorizeMutation:
 		return c.Authorize.mutate(ctx, m)
+	case *AuthorizeTokenMutation:
+		return c.AuthorizeToken.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -330,12 +340,145 @@ func (c *AuthorizeClient) mutate(ctx context.Context, m *AuthorizeMutation) (Val
 	}
 }
 
+// AuthorizeTokenClient is a client for the AuthorizeToken schema.
+type AuthorizeTokenClient struct {
+	config
+}
+
+// NewAuthorizeTokenClient returns a client for the AuthorizeToken from the given config.
+func NewAuthorizeTokenClient(c config) *AuthorizeTokenClient {
+	return &AuthorizeTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `authorizetoken.Hooks(f(g(h())))`.
+func (c *AuthorizeTokenClient) Use(hooks ...Hook) {
+	c.hooks.AuthorizeToken = append(c.hooks.AuthorizeToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `authorizetoken.Intercept(f(g(h())))`.
+func (c *AuthorizeTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AuthorizeToken = append(c.inters.AuthorizeToken, interceptors...)
+}
+
+// Create returns a builder for creating a AuthorizeToken entity.
+func (c *AuthorizeTokenClient) Create() *AuthorizeTokenCreate {
+	mutation := newAuthorizeTokenMutation(c.config, OpCreate)
+	return &AuthorizeTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AuthorizeToken entities.
+func (c *AuthorizeTokenClient) CreateBulk(builders ...*AuthorizeTokenCreate) *AuthorizeTokenCreateBulk {
+	return &AuthorizeTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AuthorizeTokenClient) MapCreateBulk(slice any, setFunc func(*AuthorizeTokenCreate, int)) *AuthorizeTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AuthorizeTokenCreateBulk{err: fmt.Errorf("calling to AuthorizeTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AuthorizeTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AuthorizeTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AuthorizeToken.
+func (c *AuthorizeTokenClient) Update() *AuthorizeTokenUpdate {
+	mutation := newAuthorizeTokenMutation(c.config, OpUpdate)
+	return &AuthorizeTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AuthorizeTokenClient) UpdateOne(_m *AuthorizeToken) *AuthorizeTokenUpdateOne {
+	mutation := newAuthorizeTokenMutation(c.config, OpUpdateOne, withAuthorizeToken(_m))
+	return &AuthorizeTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AuthorizeTokenClient) UpdateOneID(id int) *AuthorizeTokenUpdateOne {
+	mutation := newAuthorizeTokenMutation(c.config, OpUpdateOne, withAuthorizeTokenID(id))
+	return &AuthorizeTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AuthorizeToken.
+func (c *AuthorizeTokenClient) Delete() *AuthorizeTokenDelete {
+	mutation := newAuthorizeTokenMutation(c.config, OpDelete)
+	return &AuthorizeTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AuthorizeTokenClient) DeleteOne(_m *AuthorizeToken) *AuthorizeTokenDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AuthorizeTokenClient) DeleteOneID(id int) *AuthorizeTokenDeleteOne {
+	builder := c.Delete().Where(authorizetoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AuthorizeTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for AuthorizeToken.
+func (c *AuthorizeTokenClient) Query() *AuthorizeTokenQuery {
+	return &AuthorizeTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAuthorizeToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AuthorizeToken entity by its id.
+func (c *AuthorizeTokenClient) Get(ctx context.Context, id int) (*AuthorizeToken, error) {
+	return c.Query().Where(authorizetoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AuthorizeTokenClient) GetX(ctx context.Context, id int) *AuthorizeToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AuthorizeTokenClient) Hooks() []Hook {
+	return c.hooks.AuthorizeToken
+}
+
+// Interceptors returns the client interceptors.
+func (c *AuthorizeTokenClient) Interceptors() []Interceptor {
+	return c.inters.AuthorizeToken
+}
+
+func (c *AuthorizeTokenClient) mutate(ctx context.Context, m *AuthorizeTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AuthorizeTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AuthorizeTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AuthorizeTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AuthorizeTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AuthorizeToken mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Authorize []ent.Hook
+		Authorize, AuthorizeToken []ent.Hook
 	}
 	inters struct {
-		Authorize []ent.Interceptor
+		Authorize, AuthorizeToken []ent.Interceptor
 	}
 )

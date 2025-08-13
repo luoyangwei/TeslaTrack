@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Authorize_CreateAuthorize_FullMethodName = "/api.teslatrack.v1.Authorize/CreateAuthorize"
+	Authorize_Callback_FullMethodName        = "/api.teslatrack.v1.Authorize/Callback"
 )
 
 // AuthorizeClient is the client API for Authorize service.
@@ -31,6 +32,7 @@ type AuthorizeClient interface {
 	// CreateAuthorize creates a new OAuth 2.0 client.
 	// This is typically an administrative operation.
 	CreateAuthorize(ctx context.Context, in *CreateAuthorizeRequest, opts ...grpc.CallOption) (*CreateAuthorizeReply, error)
+	Callback(ctx context.Context, in *CallbackRequest, opts ...grpc.CallOption) (*CallbackReply, error)
 }
 
 type authorizeClient struct {
@@ -51,6 +53,16 @@ func (c *authorizeClient) CreateAuthorize(ctx context.Context, in *CreateAuthori
 	return out, nil
 }
 
+func (c *authorizeClient) Callback(ctx context.Context, in *CallbackRequest, opts ...grpc.CallOption) (*CallbackReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CallbackReply)
+	err := c.cc.Invoke(ctx, Authorize_Callback_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthorizeServer is the server API for Authorize service.
 // All implementations must embed UnimplementedAuthorizeServer
 // for forward compatibility.
@@ -60,6 +72,7 @@ type AuthorizeServer interface {
 	// CreateAuthorize creates a new OAuth 2.0 client.
 	// This is typically an administrative operation.
 	CreateAuthorize(context.Context, *CreateAuthorizeRequest) (*CreateAuthorizeReply, error)
+	Callback(context.Context, *CallbackRequest) (*CallbackReply, error)
 	mustEmbedUnimplementedAuthorizeServer()
 }
 
@@ -72,6 +85,9 @@ type UnimplementedAuthorizeServer struct{}
 
 func (UnimplementedAuthorizeServer) CreateAuthorize(context.Context, *CreateAuthorizeRequest) (*CreateAuthorizeReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAuthorize not implemented")
+}
+func (UnimplementedAuthorizeServer) Callback(context.Context, *CallbackRequest) (*CallbackReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Callback not implemented")
 }
 func (UnimplementedAuthorizeServer) mustEmbedUnimplementedAuthorizeServer() {}
 func (UnimplementedAuthorizeServer) testEmbeddedByValue()                   {}
@@ -112,6 +128,24 @@ func _Authorize_CreateAuthorize_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Authorize_Callback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CallbackRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthorizeServer).Callback(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Authorize_Callback_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthorizeServer).Callback(ctx, req.(*CallbackRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Authorize_ServiceDesc is the grpc.ServiceDesc for Authorize service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -122,6 +156,10 @@ var Authorize_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateAuthorize",
 			Handler:    _Authorize_CreateAuthorize_Handler,
+		},
+		{
+			MethodName: "Callback",
+			Handler:    _Authorize_Callback_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

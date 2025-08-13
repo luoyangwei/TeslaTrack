@@ -8,3 +8,6 @@ import (
 
 // Authorize is the predicate function for authorize builders.
 type Authorize func(*sql.Selector)
+
+// AuthorizeToken is the predicate function for authorizetoken builders.
+type AuthorizeToken func(*sql.Selector)

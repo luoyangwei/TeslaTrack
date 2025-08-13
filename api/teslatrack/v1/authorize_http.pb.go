@@ -19,9 +19,11 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationAuthorizeCallback = "/api.teslatrack.v1.Authorize/Callback"
 const OperationAuthorizeCreateAuthorize = "/api.teslatrack.v1.Authorize/CreateAuthorize"
 
 type AuthorizeHTTPServer interface {
+	Callback(context.Context, *CallbackRequest) (*CallbackReply, error)
 	// CreateAuthorize CreateAuthorize creates a new OAuth 2.0 client.
 	// This is typically an administrative operation.
 	CreateAuthorize(context.Context, *CreateAuthorizeRequest) (*CreateAuthorizeReply, error)
@@ -30,6 +32,7 @@ type AuthorizeHTTPServer interface {
 func RegisterAuthorizeHTTPServer(s *http.Server, srv AuthorizeHTTPServer) {
 	r := s.Route("/")
 	r.POST("/api/v1/authorize", _Authorize_CreateAuthorize0_HTTP_Handler(srv))
+	r.GET("/api/v1/authorize/callback", _Authorize_Callback0_HTTP_Handler(srv))
 }
 
 func _Authorize_CreateAuthorize0_HTTP_Handler(srv AuthorizeHTTPServer) func(ctx http.Context) error {
@@ -54,7 +57,27 @@ func _Authorize_CreateAuthorize0_HTTP_Handler(srv AuthorizeHTTPServer) func(ctx 
 	}
 }
 
+func _Authorize_Callback0_HTTP_Handler(srv AuthorizeHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in CallbackRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAuthorizeCallback)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Callback(ctx, req.(*CallbackRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*CallbackReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AuthorizeHTTPClient interface {
+	Callback(ctx context.Context, req *CallbackRequest, opts ...http.CallOption) (rsp *CallbackReply, err error)
 	CreateAuthorize(ctx context.Context, req *CreateAuthorizeRequest, opts ...http.CallOption) (rsp *CreateAuthorizeReply, err error)
 }
 
@@ -64,6 +87,19 @@ type AuthorizeHTTPClientImpl struct {
 
 func NewAuthorizeHTTPClient(client *http.Client) AuthorizeHTTPClient {
 	return &AuthorizeHTTPClientImpl{client}
+}
+
+func (c *AuthorizeHTTPClientImpl) Callback(ctx context.Context, in *CallbackRequest, opts ...http.CallOption) (*CallbackReply, error) {
+	var out CallbackReply
+	pattern := "/api/v1/authorize/callback"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAuthorizeCallback))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 func (c *AuthorizeHTTPClientImpl) CreateAuthorize(ctx context.Context, in *CreateAuthorizeRequest, opts ...http.CallOption) (*CreateAuthorizeReply, error) {

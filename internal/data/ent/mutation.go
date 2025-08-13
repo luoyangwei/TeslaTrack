@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"sync"
 	"teslatrack/internal/data/ent/authorize"
+	"teslatrack/internal/data/ent/authorizetoken"
 	"teslatrack/internal/data/ent/predicate"
 	"time"
 
@@ -24,7 +25,8 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAuthorize = "Authorize"
+	TypeAuthorize      = "Authorize"
+	TypeAuthorizeToken = "AuthorizeToken"
 )
 
 // AuthorizeMutation represents an operation that mutates the Authorize nodes in the graph.
@@ -675,4 +677,762 @@ func (m *AuthorizeMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *AuthorizeMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Authorize edge %s", name)
+}
+
+// AuthorizeTokenMutation represents an operation that mutates the AuthorizeToken nodes in the graph.
+type AuthorizeTokenMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	tesla_code    *string
+	client_id     *string
+	client_secret *string
+	access_token  *string
+	refresh_token *string
+	scope         *string
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted       *bool
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*AuthorizeToken, error)
+	predicates    []predicate.AuthorizeToken
+}
+
+var _ ent.Mutation = (*AuthorizeTokenMutation)(nil)
+
+// authorizetokenOption allows management of the mutation configuration using functional options.
+type authorizetokenOption func(*AuthorizeTokenMutation)
+
+// newAuthorizeTokenMutation creates new mutation for the AuthorizeToken entity.
+func newAuthorizeTokenMutation(c config, op Op, opts ...authorizetokenOption) *AuthorizeTokenMutation {
+	m := &AuthorizeTokenMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAuthorizeToken,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withAuthorizeTokenID sets the ID field of the mutation.
+func withAuthorizeTokenID(id int) authorizetokenOption {
+	return func(m *AuthorizeTokenMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *AuthorizeToken
+		)
+		m.oldValue = func(ctx context.Context) (*AuthorizeToken, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().AuthorizeToken.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAuthorizeToken sets the old AuthorizeToken of the mutation.
+func withAuthorizeToken(node *AuthorizeToken) authorizetokenOption {
+	return func(m *AuthorizeTokenMutation) {
+		m.oldValue = func(context.Context) (*AuthorizeToken, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AuthorizeTokenMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AuthorizeTokenMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *AuthorizeTokenMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *AuthorizeTokenMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().AuthorizeToken.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetTeslaCode sets the "tesla_code" field.
+func (m *AuthorizeTokenMutation) SetTeslaCode(s string) {
+	m.tesla_code = &s
+}
+
+// TeslaCode returns the value of the "tesla_code" field in the mutation.
+func (m *AuthorizeTokenMutation) TeslaCode() (r string, exists bool) {
+	v := m.tesla_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTeslaCode returns the old "tesla_code" field's value of the AuthorizeToken entity.
+// If the AuthorizeToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeTokenMutation) OldTeslaCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTeslaCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTeslaCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTeslaCode: %w", err)
+	}
+	return oldValue.TeslaCode, nil
+}
+
+// ResetTeslaCode resets all changes to the "tesla_code" field.
+func (m *AuthorizeTokenMutation) ResetTeslaCode() {
+	m.tesla_code = nil
+}
+
+// SetClientID sets the "client_id" field.
+func (m *AuthorizeTokenMutation) SetClientID(s string) {
+	m.client_id = &s
+}
+
+// ClientID returns the value of the "client_id" field in the mutation.
+func (m *AuthorizeTokenMutation) ClientID() (r string, exists bool) {
+	v := m.client_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClientID returns the old "client_id" field's value of the AuthorizeToken entity.
+// If the AuthorizeToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeTokenMutation) OldClientID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldClientID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldClientID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClientID: %w", err)
+	}
+	return oldValue.ClientID, nil
+}
+
+// ResetClientID resets all changes to the "client_id" field.
+func (m *AuthorizeTokenMutation) ResetClientID() {
+	m.client_id = nil
+}
+
+// SetClientSecret sets the "client_secret" field.
+func (m *AuthorizeTokenMutation) SetClientSecret(s string) {
+	m.client_secret = &s
+}
+
+// ClientSecret returns the value of the "client_secret" field in the mutation.
+func (m *AuthorizeTokenMutation) ClientSecret() (r string, exists bool) {
+	v := m.client_secret
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClientSecret returns the old "client_secret" field's value of the AuthorizeToken entity.
+// If the AuthorizeToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeTokenMutation) OldClientSecret(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldClientSecret is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldClientSecret requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClientSecret: %w", err)
+	}
+	return oldValue.ClientSecret, nil
+}
+
+// ResetClientSecret resets all changes to the "client_secret" field.
+func (m *AuthorizeTokenMutation) ResetClientSecret() {
+	m.client_secret = nil
+}
+
+// SetAccessToken sets the "access_token" field.
+func (m *AuthorizeTokenMutation) SetAccessToken(s string) {
+	m.access_token = &s
+}
+
+// AccessToken returns the value of the "access_token" field in the mutation.
+func (m *AuthorizeTokenMutation) AccessToken() (r string, exists bool) {
+	v := m.access_token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAccessToken returns the old "access_token" field's value of the AuthorizeToken entity.
+// If the AuthorizeToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeTokenMutation) OldAccessToken(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAccessToken is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAccessToken requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAccessToken: %w", err)
+	}
+	return oldValue.AccessToken, nil
+}
+
+// ResetAccessToken resets all changes to the "access_token" field.
+func (m *AuthorizeTokenMutation) ResetAccessToken() {
+	m.access_token = nil
+}
+
+// SetRefreshToken sets the "refresh_token" field.
+func (m *AuthorizeTokenMutation) SetRefreshToken(s string) {
+	m.refresh_token = &s
+}
+
+// RefreshToken returns the value of the "refresh_token" field in the mutation.
+func (m *AuthorizeTokenMutation) RefreshToken() (r string, exists bool) {
+	v := m.refresh_token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRefreshToken returns the old "refresh_token" field's value of the AuthorizeToken entity.
+// If the AuthorizeToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeTokenMutation) OldRefreshToken(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRefreshToken is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRefreshToken requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRefreshToken: %w", err)
+	}
+	return oldValue.RefreshToken, nil
+}
+
+// ResetRefreshToken resets all changes to the "refresh_token" field.
+func (m *AuthorizeTokenMutation) ResetRefreshToken() {
+	m.refresh_token = nil
+}
+
+// SetScope sets the "scope" field.
+func (m *AuthorizeTokenMutation) SetScope(s string) {
+	m.scope = &s
+}
+
+// Scope returns the value of the "scope" field in the mutation.
+func (m *AuthorizeTokenMutation) Scope() (r string, exists bool) {
+	v := m.scope
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldScope returns the old "scope" field's value of the AuthorizeToken entity.
+// If the AuthorizeToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeTokenMutation) OldScope(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldScope is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldScope requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldScope: %w", err)
+	}
+	return oldValue.Scope, nil
+}
+
+// ResetScope resets all changes to the "scope" field.
+func (m *AuthorizeTokenMutation) ResetScope() {
+	m.scope = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *AuthorizeTokenMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *AuthorizeTokenMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the AuthorizeToken entity.
+// If the AuthorizeToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeTokenMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *AuthorizeTokenMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *AuthorizeTokenMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *AuthorizeTokenMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the AuthorizeToken entity.
+// If the AuthorizeToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeTokenMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *AuthorizeTokenMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeleted sets the "deleted" field.
+func (m *AuthorizeTokenMutation) SetDeleted(b bool) {
+	m.deleted = &b
+}
+
+// Deleted returns the value of the "deleted" field in the mutation.
+func (m *AuthorizeTokenMutation) Deleted() (r bool, exists bool) {
+	v := m.deleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeleted returns the old "deleted" field's value of the AuthorizeToken entity.
+// If the AuthorizeToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeTokenMutation) OldDeleted(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeleted is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeleted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
+	}
+	return oldValue.Deleted, nil
+}
+
+// ResetDeleted resets all changes to the "deleted" field.
+func (m *AuthorizeTokenMutation) ResetDeleted() {
+	m.deleted = nil
+}
+
+// Where appends a list predicates to the AuthorizeTokenMutation builder.
+func (m *AuthorizeTokenMutation) Where(ps ...predicate.AuthorizeToken) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the AuthorizeTokenMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *AuthorizeTokenMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.AuthorizeToken, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *AuthorizeTokenMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *AuthorizeTokenMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (AuthorizeToken).
+func (m *AuthorizeTokenMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *AuthorizeTokenMutation) Fields() []string {
+	fields := make([]string, 0, 9)
+	if m.tesla_code != nil {
+		fields = append(fields, authorizetoken.FieldTeslaCode)
+	}
+	if m.client_id != nil {
+		fields = append(fields, authorizetoken.FieldClientID)
+	}
+	if m.client_secret != nil {
+		fields = append(fields, authorizetoken.FieldClientSecret)
+	}
+	if m.access_token != nil {
+		fields = append(fields, authorizetoken.FieldAccessToken)
+	}
+	if m.refresh_token != nil {
+		fields = append(fields, authorizetoken.FieldRefreshToken)
+	}
+	if m.scope != nil {
+		fields = append(fields, authorizetoken.FieldScope)
+	}
+	if m.created_at != nil {
+		fields = append(fields, authorizetoken.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, authorizetoken.FieldUpdatedAt)
+	}
+	if m.deleted != nil {
+		fields = append(fields, authorizetoken.FieldDeleted)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *AuthorizeTokenMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case authorizetoken.FieldTeslaCode:
+		return m.TeslaCode()
+	case authorizetoken.FieldClientID:
+		return m.ClientID()
+	case authorizetoken.FieldClientSecret:
+		return m.ClientSecret()
+	case authorizetoken.FieldAccessToken:
+		return m.AccessToken()
+	case authorizetoken.FieldRefreshToken:
+		return m.RefreshToken()
+	case authorizetoken.FieldScope:
+		return m.Scope()
+	case authorizetoken.FieldCreatedAt:
+		return m.CreatedAt()
+	case authorizetoken.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case authorizetoken.FieldDeleted:
+		return m.Deleted()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *AuthorizeTokenMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case authorizetoken.FieldTeslaCode:
+		return m.OldTeslaCode(ctx)
+	case authorizetoken.FieldClientID:
+		return m.OldClientID(ctx)
+	case authorizetoken.FieldClientSecret:
+		return m.OldClientSecret(ctx)
+	case authorizetoken.FieldAccessToken:
+		return m.OldAccessToken(ctx)
+	case authorizetoken.FieldRefreshToken:
+		return m.OldRefreshToken(ctx)
+	case authorizetoken.FieldScope:
+		return m.OldScope(ctx)
+	case authorizetoken.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case authorizetoken.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case authorizetoken.FieldDeleted:
+		return m.OldDeleted(ctx)
+	}
+	return nil, fmt.Errorf("unknown AuthorizeToken field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AuthorizeTokenMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case authorizetoken.FieldTeslaCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTeslaCode(v)
+		return nil
+	case authorizetoken.FieldClientID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClientID(v)
+		return nil
+	case authorizetoken.FieldClientSecret:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClientSecret(v)
+		return nil
+	case authorizetoken.FieldAccessToken:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAccessToken(v)
+		return nil
+	case authorizetoken.FieldRefreshToken:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRefreshToken(v)
+		return nil
+	case authorizetoken.FieldScope:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetScope(v)
+		return nil
+	case authorizetoken.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case authorizetoken.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case authorizetoken.FieldDeleted:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeleted(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AuthorizeToken field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *AuthorizeTokenMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *AuthorizeTokenMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AuthorizeTokenMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown AuthorizeToken numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *AuthorizeTokenMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *AuthorizeTokenMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AuthorizeTokenMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown AuthorizeToken nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *AuthorizeTokenMutation) ResetField(name string) error {
+	switch name {
+	case authorizetoken.FieldTeslaCode:
+		m.ResetTeslaCode()
+		return nil
+	case authorizetoken.FieldClientID:
+		m.ResetClientID()
+		return nil
+	case authorizetoken.FieldClientSecret:
+		m.ResetClientSecret()
+		return nil
+	case authorizetoken.FieldAccessToken:
+		m.ResetAccessToken()
+		return nil
+	case authorizetoken.FieldRefreshToken:
+		m.ResetRefreshToken()
+		return nil
+	case authorizetoken.FieldScope:
+		m.ResetScope()
+		return nil
+	case authorizetoken.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case authorizetoken.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case authorizetoken.FieldDeleted:
+		m.ResetDeleted()
+		return nil
+	}
+	return fmt.Errorf("unknown AuthorizeToken field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *AuthorizeTokenMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *AuthorizeTokenMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *AuthorizeTokenMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *AuthorizeTokenMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *AuthorizeTokenMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *AuthorizeTokenMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *AuthorizeTokenMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown AuthorizeToken unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *AuthorizeTokenMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown AuthorizeToken edge %s", name)
 }

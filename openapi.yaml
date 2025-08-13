@@ -27,6 +27,24 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.teslatrack.v1.CreateAuthorizeReply'
+    /api/v1/authorize/callback:
+        get:
+            tags:
+                - Authorize
+            operationId: Authorize_Callback
+            parameters:
+                - name: code
+                  in: query
+                  description: callback code
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.teslatrack.v1.CallbackReply'
     /helloworld/{name}:
         get:
             tags:
@@ -48,6 +66,9 @@ paths:
                                 $ref: '#/components/schemas/helloworld.v1.HelloReply'
 components:
     schemas:
+        api.teslatrack.v1.CallbackReply:
+            type: object
+            properties: {}
         api.teslatrack.v1.CreateAuthorizeReply:
             type: object
             properties: {}

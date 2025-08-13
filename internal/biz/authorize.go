@@ -60,3 +60,8 @@ func (uc *AuthorizeUsecase) Update(ctx context.Context, authorize *Authorize) er
 func (uc *AuthorizeUsecase) FindByClientID(ctx context.Context, clientID string) (*Authorize, error) {
 	return uc.repo.FindByClientID(ctx, clientID)
 }
+
+// Callback
+func (uc *AuthorizeUsecase) Callback(ctx context.Context, code string) error {
+	return nil
+}

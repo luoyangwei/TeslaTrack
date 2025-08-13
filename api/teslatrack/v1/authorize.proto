@@ -19,6 +19,12 @@ service Authorize {
             body: "*"
         };
     }
+    
+    rpc Callback(CallbackRequest) returns (CallbackReply) {
+        option (google.api.http) = {
+            get: "/api/v1/authorize/callback"
+        };
+    }
 }
 
 // The request message for creating a new authorization client.
@@ -37,4 +43,13 @@ message CreateAuthorizeRequest {
 message CreateAuthorizeReply {
     // The unique ID of the created authorization client.
     // int64 id = 1;
+}
+
+
+message CallbackRequest {
+    // callback code
+    string code = 1;
+}
+
+message CallbackReply {
 }
