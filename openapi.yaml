@@ -3,10 +3,30 @@
 
 openapi: 3.0.3
 info:
-    title: Greeter API
-    description: The greeting service definition.
+    title: ""
     version: 0.0.1
 paths:
+    /api/v1/authorize:
+        post:
+            tags:
+                - Authorize
+            description: |-
+                CreateAuthorize creates a new OAuth 2.0 client.
+                 This is typically an administrative operation.
+            operationId: Authorize_CreateAuthorize
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.teslatrack.v1.CreateAuthorizeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.teslatrack.v1.CreateAuthorizeReply'
     /helloworld/{name}:
         get:
             tags:
@@ -28,6 +48,26 @@ paths:
                                 $ref: '#/components/schemas/helloworld.v1.HelloReply'
 components:
     schemas:
+        api.teslatrack.v1.CreateAuthorizeReply:
+            type: object
+            properties: {}
+            description: The reply message containing the ID of the newly created authorization client.
+        api.teslatrack.v1.CreateAuthorizeRequest:
+            type: object
+            properties:
+                clientId:
+                    type: string
+                    description: The client identifier. Must be unique.
+                clientSecret:
+                    type: string
+                    description: The client secret. A confidential value.
+                grantType:
+                    type: string
+                    description: The grant type the client is allowed to use (e.g., "authorization_code").
+                redirectURI:
+                    type: string
+                    description: The URI to redirect to after authorization.
+            description: The request message for creating a new authorization client.
         helloworld.v1.HelloReply:
             type: object
             properties:
@@ -35,4 +75,7 @@ components:
                     type: string
             description: The response message containing the greetings
 tags:
+    - name: Authorize
+      description: The Authorize service provides methods for managing OAuth 2.0 clients.
     - name: Greeter
+      description: The greeting service definition.

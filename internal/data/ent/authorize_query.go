@@ -258,6 +258,18 @@ func (_q *AuthorizeQuery) Clone() *AuthorizeQuery {
 
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
+//
+// Example:
+//
+//	var v []struct {
+//		ClientID string `json:"client_id,omitempty"`
+//		Count int `json:"count,omitempty"`
+//	}
+//
+//	client.Authorize.Query().
+//		GroupBy(authorize.FieldClientID).
+//		Aggregate(ent.Count()).
+//		Scan(ctx, &v)
 func (_q *AuthorizeQuery) GroupBy(field string, fields ...string) *AuthorizeGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &AuthorizeGroupBy{build: _q}
@@ -269,6 +281,16 @@ func (_q *AuthorizeQuery) GroupBy(field string, fields ...string) *AuthorizeGrou
 
 // Select allows the selection one or more fields/columns for the given query,
 // instead of selecting all fields in the entity.
+//
+// Example:
+//
+//	var v []struct {
+//		ClientID string `json:"client_id,omitempty"`
+//	}
+//
+//	client.Authorize.Query().
+//		Select(authorize.FieldClientID).
+//		Scan(ctx, &v)
 func (_q *AuthorizeQuery) Select(fields ...string) *AuthorizeSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
 	sbuild := &AuthorizeSelect{AuthorizeQuery: _q}

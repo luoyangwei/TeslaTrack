@@ -4,6 +4,7 @@ package authorize
 
 import (
 	"teslatrack/internal/data/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 )
@@ -51,6 +52,391 @@ func IDLT(id int) predicate.Authorize {
 // IDLTE applies the LTE predicate on the ID field.
 func IDLTE(id int) predicate.Authorize {
 	return predicate.Authorize(sql.FieldLTE(FieldID, id))
+}
+
+// ClientID applies equality check predicate on the "client_id" field. It's identical to ClientIDEQ.
+func ClientID(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldClientID, v))
+}
+
+// ClientSecret applies equality check predicate on the "client_secret" field. It's identical to ClientSecretEQ.
+func ClientSecret(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldClientSecret, v))
+}
+
+// GrantType applies equality check predicate on the "grant_type" field. It's identical to GrantTypeEQ.
+func GrantType(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldGrantType, v))
+}
+
+// RedirectURI applies equality check predicate on the "redirect_uri" field. It's identical to RedirectURIEQ.
+func RedirectURI(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldRedirectURI, v))
+}
+
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// Deleted applies equality check predicate on the "deleted" field. It's identical to DeletedEQ.
+func Deleted(v bool) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldDeleted, v))
+}
+
+// ClientIDEQ applies the EQ predicate on the "client_id" field.
+func ClientIDEQ(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldClientID, v))
+}
+
+// ClientIDNEQ applies the NEQ predicate on the "client_id" field.
+func ClientIDNEQ(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldNEQ(FieldClientID, v))
+}
+
+// ClientIDIn applies the In predicate on the "client_id" field.
+func ClientIDIn(vs ...string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldIn(FieldClientID, vs...))
+}
+
+// ClientIDNotIn applies the NotIn predicate on the "client_id" field.
+func ClientIDNotIn(vs ...string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldNotIn(FieldClientID, vs...))
+}
+
+// ClientIDGT applies the GT predicate on the "client_id" field.
+func ClientIDGT(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldGT(FieldClientID, v))
+}
+
+// ClientIDGTE applies the GTE predicate on the "client_id" field.
+func ClientIDGTE(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldGTE(FieldClientID, v))
+}
+
+// ClientIDLT applies the LT predicate on the "client_id" field.
+func ClientIDLT(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldLT(FieldClientID, v))
+}
+
+// ClientIDLTE applies the LTE predicate on the "client_id" field.
+func ClientIDLTE(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldLTE(FieldClientID, v))
+}
+
+// ClientIDContains applies the Contains predicate on the "client_id" field.
+func ClientIDContains(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldContains(FieldClientID, v))
+}
+
+// ClientIDHasPrefix applies the HasPrefix predicate on the "client_id" field.
+func ClientIDHasPrefix(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldHasPrefix(FieldClientID, v))
+}
+
+// ClientIDHasSuffix applies the HasSuffix predicate on the "client_id" field.
+func ClientIDHasSuffix(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldHasSuffix(FieldClientID, v))
+}
+
+// ClientIDEqualFold applies the EqualFold predicate on the "client_id" field.
+func ClientIDEqualFold(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEqualFold(FieldClientID, v))
+}
+
+// ClientIDContainsFold applies the ContainsFold predicate on the "client_id" field.
+func ClientIDContainsFold(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldContainsFold(FieldClientID, v))
+}
+
+// ClientSecretEQ applies the EQ predicate on the "client_secret" field.
+func ClientSecretEQ(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldClientSecret, v))
+}
+
+// ClientSecretNEQ applies the NEQ predicate on the "client_secret" field.
+func ClientSecretNEQ(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldNEQ(FieldClientSecret, v))
+}
+
+// ClientSecretIn applies the In predicate on the "client_secret" field.
+func ClientSecretIn(vs ...string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldIn(FieldClientSecret, vs...))
+}
+
+// ClientSecretNotIn applies the NotIn predicate on the "client_secret" field.
+func ClientSecretNotIn(vs ...string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldNotIn(FieldClientSecret, vs...))
+}
+
+// ClientSecretGT applies the GT predicate on the "client_secret" field.
+func ClientSecretGT(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldGT(FieldClientSecret, v))
+}
+
+// ClientSecretGTE applies the GTE predicate on the "client_secret" field.
+func ClientSecretGTE(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldGTE(FieldClientSecret, v))
+}
+
+// ClientSecretLT applies the LT predicate on the "client_secret" field.
+func ClientSecretLT(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldLT(FieldClientSecret, v))
+}
+
+// ClientSecretLTE applies the LTE predicate on the "client_secret" field.
+func ClientSecretLTE(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldLTE(FieldClientSecret, v))
+}
+
+// ClientSecretContains applies the Contains predicate on the "client_secret" field.
+func ClientSecretContains(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldContains(FieldClientSecret, v))
+}
+
+// ClientSecretHasPrefix applies the HasPrefix predicate on the "client_secret" field.
+func ClientSecretHasPrefix(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldHasPrefix(FieldClientSecret, v))
+}
+
+// ClientSecretHasSuffix applies the HasSuffix predicate on the "client_secret" field.
+func ClientSecretHasSuffix(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldHasSuffix(FieldClientSecret, v))
+}
+
+// ClientSecretEqualFold applies the EqualFold predicate on the "client_secret" field.
+func ClientSecretEqualFold(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEqualFold(FieldClientSecret, v))
+}
+
+// ClientSecretContainsFold applies the ContainsFold predicate on the "client_secret" field.
+func ClientSecretContainsFold(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldContainsFold(FieldClientSecret, v))
+}
+
+// GrantTypeEQ applies the EQ predicate on the "grant_type" field.
+func GrantTypeEQ(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldGrantType, v))
+}
+
+// GrantTypeNEQ applies the NEQ predicate on the "grant_type" field.
+func GrantTypeNEQ(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldNEQ(FieldGrantType, v))
+}
+
+// GrantTypeIn applies the In predicate on the "grant_type" field.
+func GrantTypeIn(vs ...string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldIn(FieldGrantType, vs...))
+}
+
+// GrantTypeNotIn applies the NotIn predicate on the "grant_type" field.
+func GrantTypeNotIn(vs ...string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldNotIn(FieldGrantType, vs...))
+}
+
+// GrantTypeGT applies the GT predicate on the "grant_type" field.
+func GrantTypeGT(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldGT(FieldGrantType, v))
+}
+
+// GrantTypeGTE applies the GTE predicate on the "grant_type" field.
+func GrantTypeGTE(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldGTE(FieldGrantType, v))
+}
+
+// GrantTypeLT applies the LT predicate on the "grant_type" field.
+func GrantTypeLT(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldLT(FieldGrantType, v))
+}
+
+// GrantTypeLTE applies the LTE predicate on the "grant_type" field.
+func GrantTypeLTE(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldLTE(FieldGrantType, v))
+}
+
+// GrantTypeContains applies the Contains predicate on the "grant_type" field.
+func GrantTypeContains(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldContains(FieldGrantType, v))
+}
+
+// GrantTypeHasPrefix applies the HasPrefix predicate on the "grant_type" field.
+func GrantTypeHasPrefix(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldHasPrefix(FieldGrantType, v))
+}
+
+// GrantTypeHasSuffix applies the HasSuffix predicate on the "grant_type" field.
+func GrantTypeHasSuffix(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldHasSuffix(FieldGrantType, v))
+}
+
+// GrantTypeEqualFold applies the EqualFold predicate on the "grant_type" field.
+func GrantTypeEqualFold(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEqualFold(FieldGrantType, v))
+}
+
+// GrantTypeContainsFold applies the ContainsFold predicate on the "grant_type" field.
+func GrantTypeContainsFold(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldContainsFold(FieldGrantType, v))
+}
+
+// RedirectURIEQ applies the EQ predicate on the "redirect_uri" field.
+func RedirectURIEQ(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldRedirectURI, v))
+}
+
+// RedirectURINEQ applies the NEQ predicate on the "redirect_uri" field.
+func RedirectURINEQ(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldNEQ(FieldRedirectURI, v))
+}
+
+// RedirectURIIn applies the In predicate on the "redirect_uri" field.
+func RedirectURIIn(vs ...string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldIn(FieldRedirectURI, vs...))
+}
+
+// RedirectURINotIn applies the NotIn predicate on the "redirect_uri" field.
+func RedirectURINotIn(vs ...string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldNotIn(FieldRedirectURI, vs...))
+}
+
+// RedirectURIGT applies the GT predicate on the "redirect_uri" field.
+func RedirectURIGT(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldGT(FieldRedirectURI, v))
+}
+
+// RedirectURIGTE applies the GTE predicate on the "redirect_uri" field.
+func RedirectURIGTE(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldGTE(FieldRedirectURI, v))
+}
+
+// RedirectURILT applies the LT predicate on the "redirect_uri" field.
+func RedirectURILT(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldLT(FieldRedirectURI, v))
+}
+
+// RedirectURILTE applies the LTE predicate on the "redirect_uri" field.
+func RedirectURILTE(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldLTE(FieldRedirectURI, v))
+}
+
+// RedirectURIContains applies the Contains predicate on the "redirect_uri" field.
+func RedirectURIContains(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldContains(FieldRedirectURI, v))
+}
+
+// RedirectURIHasPrefix applies the HasPrefix predicate on the "redirect_uri" field.
+func RedirectURIHasPrefix(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldHasPrefix(FieldRedirectURI, v))
+}
+
+// RedirectURIHasSuffix applies the HasSuffix predicate on the "redirect_uri" field.
+func RedirectURIHasSuffix(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldHasSuffix(FieldRedirectURI, v))
+}
+
+// RedirectURIEqualFold applies the EqualFold predicate on the "redirect_uri" field.
+func RedirectURIEqualFold(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEqualFold(FieldRedirectURI, v))
+}
+
+// RedirectURIContainsFold applies the ContainsFold predicate on the "redirect_uri" field.
+func RedirectURIContainsFold(v string) predicate.Authorize {
+	return predicate.Authorize(sql.FieldContainsFold(FieldRedirectURI, v))
+}
+
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.Authorize {
+	return predicate.Authorize(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// DeletedEQ applies the EQ predicate on the "deleted" field.
+func DeletedEQ(v bool) predicate.Authorize {
+	return predicate.Authorize(sql.FieldEQ(FieldDeleted, v))
+}
+
+// DeletedNEQ applies the NEQ predicate on the "deleted" field.
+func DeletedNEQ(v bool) predicate.Authorize {
+	return predicate.Authorize(sql.FieldNEQ(FieldDeleted, v))
 }
 
 // And groups predicates with the AND operator between them.

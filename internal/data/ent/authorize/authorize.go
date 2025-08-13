@@ -3,6 +3,8 @@
 package authorize
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 )
 
@@ -11,13 +13,34 @@ const (
 	Label = "authorize"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldClientID holds the string denoting the client_id field in the database.
+	FieldClientID = "client_id"
+	// FieldClientSecret holds the string denoting the client_secret field in the database.
+	FieldClientSecret = "client_secret"
+	// FieldGrantType holds the string denoting the grant_type field in the database.
+	FieldGrantType = "grant_type"
+	// FieldRedirectURI holds the string denoting the redirect_uri field in the database.
+	FieldRedirectURI = "redirect_uri"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldDeleted holds the string denoting the deleted field in the database.
+	FieldDeleted = "deleted"
 	// Table holds the table name of the authorize in the database.
-	Table = "authorizes"
+	Table = "authorize"
 )
 
 // Columns holds all SQL columns for authorize fields.
 var Columns = []string{
 	FieldID,
+	FieldClientID,
+	FieldClientSecret,
+	FieldGrantType,
+	FieldRedirectURI,
+	FieldCreatedAt,
+	FieldUpdatedAt,
+	FieldDeleted,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -30,10 +53,56 @@ func ValidColumn(column string) bool {
 	return false
 }
 
+var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultDeleted holds the default value on creation for the "deleted" field.
+	DefaultDeleted bool
+)
+
 // OrderOption defines the ordering options for the Authorize queries.
 type OrderOption func(*sql.Selector)
 
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByClientID orders the results by the client_id field.
+func ByClientID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldClientID, opts...).ToFunc()
+}
+
+// ByClientSecret orders the results by the client_secret field.
+func ByClientSecret(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldClientSecret, opts...).ToFunc()
+}
+
+// ByGrantType orders the results by the grant_type field.
+func ByGrantType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGrantType, opts...).ToFunc()
+}
+
+// ByRedirectURI orders the results by the redirect_uri field.
+func ByRedirectURI(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRedirectURI, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDeleted orders the results by the deleted field.
+func ByDeleted(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeleted, opts...).ToFunc()
 }

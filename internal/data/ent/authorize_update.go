@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"teslatrack/internal/data/ent/authorize"
 	"teslatrack/internal/data/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -27,6 +28,82 @@ func (_u *AuthorizeUpdate) Where(ps ...predicate.Authorize) *AuthorizeUpdate {
 	return _u
 }
 
+// SetClientID sets the "client_id" field.
+func (_u *AuthorizeUpdate) SetClientID(v string) *AuthorizeUpdate {
+	_u.mutation.SetClientID(v)
+	return _u
+}
+
+// SetNillableClientID sets the "client_id" field if the given value is not nil.
+func (_u *AuthorizeUpdate) SetNillableClientID(v *string) *AuthorizeUpdate {
+	if v != nil {
+		_u.SetClientID(*v)
+	}
+	return _u
+}
+
+// SetClientSecret sets the "client_secret" field.
+func (_u *AuthorizeUpdate) SetClientSecret(v string) *AuthorizeUpdate {
+	_u.mutation.SetClientSecret(v)
+	return _u
+}
+
+// SetNillableClientSecret sets the "client_secret" field if the given value is not nil.
+func (_u *AuthorizeUpdate) SetNillableClientSecret(v *string) *AuthorizeUpdate {
+	if v != nil {
+		_u.SetClientSecret(*v)
+	}
+	return _u
+}
+
+// SetGrantType sets the "grant_type" field.
+func (_u *AuthorizeUpdate) SetGrantType(v string) *AuthorizeUpdate {
+	_u.mutation.SetGrantType(v)
+	return _u
+}
+
+// SetNillableGrantType sets the "grant_type" field if the given value is not nil.
+func (_u *AuthorizeUpdate) SetNillableGrantType(v *string) *AuthorizeUpdate {
+	if v != nil {
+		_u.SetGrantType(*v)
+	}
+	return _u
+}
+
+// SetRedirectURI sets the "redirect_uri" field.
+func (_u *AuthorizeUpdate) SetRedirectURI(v string) *AuthorizeUpdate {
+	_u.mutation.SetRedirectURI(v)
+	return _u
+}
+
+// SetNillableRedirectURI sets the "redirect_uri" field if the given value is not nil.
+func (_u *AuthorizeUpdate) SetNillableRedirectURI(v *string) *AuthorizeUpdate {
+	if v != nil {
+		_u.SetRedirectURI(*v)
+	}
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *AuthorizeUpdate) SetUpdatedAt(v time.Time) *AuthorizeUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
+// SetDeleted sets the "deleted" field.
+func (_u *AuthorizeUpdate) SetDeleted(v bool) *AuthorizeUpdate {
+	_u.mutation.SetDeleted(v)
+	return _u
+}
+
+// SetNillableDeleted sets the "deleted" field if the given value is not nil.
+func (_u *AuthorizeUpdate) SetNillableDeleted(v *bool) *AuthorizeUpdate {
+	if v != nil {
+		_u.SetDeleted(*v)
+	}
+	return _u
+}
+
 // Mutation returns the AuthorizeMutation object of the builder.
 func (_u *AuthorizeUpdate) Mutation() *AuthorizeMutation {
 	return _u.mutation
@@ -34,6 +111,7 @@ func (_u *AuthorizeUpdate) Mutation() *AuthorizeMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (_u *AuthorizeUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -59,6 +137,14 @@ func (_u *AuthorizeUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_u *AuthorizeUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := authorize.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (_u *AuthorizeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(authorize.Table, authorize.Columns, sqlgraph.NewFieldSpec(authorize.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
@@ -67,6 +153,24 @@ func (_u *AuthorizeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.ClientID(); ok {
+		_spec.SetField(authorize.FieldClientID, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.ClientSecret(); ok {
+		_spec.SetField(authorize.FieldClientSecret, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.GrantType(); ok {
+		_spec.SetField(authorize.FieldGrantType, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.RedirectURI(); ok {
+		_spec.SetField(authorize.FieldRedirectURI, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(authorize.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.Deleted(); ok {
+		_spec.SetField(authorize.FieldDeleted, field.TypeBool, value)
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -86,6 +190,82 @@ type AuthorizeUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *AuthorizeMutation
+}
+
+// SetClientID sets the "client_id" field.
+func (_u *AuthorizeUpdateOne) SetClientID(v string) *AuthorizeUpdateOne {
+	_u.mutation.SetClientID(v)
+	return _u
+}
+
+// SetNillableClientID sets the "client_id" field if the given value is not nil.
+func (_u *AuthorizeUpdateOne) SetNillableClientID(v *string) *AuthorizeUpdateOne {
+	if v != nil {
+		_u.SetClientID(*v)
+	}
+	return _u
+}
+
+// SetClientSecret sets the "client_secret" field.
+func (_u *AuthorizeUpdateOne) SetClientSecret(v string) *AuthorizeUpdateOne {
+	_u.mutation.SetClientSecret(v)
+	return _u
+}
+
+// SetNillableClientSecret sets the "client_secret" field if the given value is not nil.
+func (_u *AuthorizeUpdateOne) SetNillableClientSecret(v *string) *AuthorizeUpdateOne {
+	if v != nil {
+		_u.SetClientSecret(*v)
+	}
+	return _u
+}
+
+// SetGrantType sets the "grant_type" field.
+func (_u *AuthorizeUpdateOne) SetGrantType(v string) *AuthorizeUpdateOne {
+	_u.mutation.SetGrantType(v)
+	return _u
+}
+
+// SetNillableGrantType sets the "grant_type" field if the given value is not nil.
+func (_u *AuthorizeUpdateOne) SetNillableGrantType(v *string) *AuthorizeUpdateOne {
+	if v != nil {
+		_u.SetGrantType(*v)
+	}
+	return _u
+}
+
+// SetRedirectURI sets the "redirect_uri" field.
+func (_u *AuthorizeUpdateOne) SetRedirectURI(v string) *AuthorizeUpdateOne {
+	_u.mutation.SetRedirectURI(v)
+	return _u
+}
+
+// SetNillableRedirectURI sets the "redirect_uri" field if the given value is not nil.
+func (_u *AuthorizeUpdateOne) SetNillableRedirectURI(v *string) *AuthorizeUpdateOne {
+	if v != nil {
+		_u.SetRedirectURI(*v)
+	}
+	return _u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_u *AuthorizeUpdateOne) SetUpdatedAt(v time.Time) *AuthorizeUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
+}
+
+// SetDeleted sets the "deleted" field.
+func (_u *AuthorizeUpdateOne) SetDeleted(v bool) *AuthorizeUpdateOne {
+	_u.mutation.SetDeleted(v)
+	return _u
+}
+
+// SetNillableDeleted sets the "deleted" field if the given value is not nil.
+func (_u *AuthorizeUpdateOne) SetNillableDeleted(v *bool) *AuthorizeUpdateOne {
+	if v != nil {
+		_u.SetDeleted(*v)
+	}
+	return _u
 }
 
 // Mutation returns the AuthorizeMutation object of the builder.
@@ -108,6 +288,7 @@ func (_u *AuthorizeUpdateOne) Select(field string, fields ...string) *AuthorizeU
 
 // Save executes the query and returns the updated Authorize entity.
 func (_u *AuthorizeUpdateOne) Save(ctx context.Context) (*Authorize, error) {
+	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
@@ -130,6 +311,14 @@ func (_u *AuthorizeUpdateOne) Exec(ctx context.Context) error {
 func (_u *AuthorizeUpdateOne) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (_u *AuthorizeUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
+		v := authorize.UpdateDefaultUpdatedAt()
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -158,6 +347,24 @@ func (_u *AuthorizeUpdateOne) sqlSave(ctx context.Context) (_node *Authorize, er
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := _u.mutation.ClientID(); ok {
+		_spec.SetField(authorize.FieldClientID, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.ClientSecret(); ok {
+		_spec.SetField(authorize.FieldClientSecret, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.GrantType(); ok {
+		_spec.SetField(authorize.FieldGrantType, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.RedirectURI(); ok {
+		_spec.SetField(authorize.FieldRedirectURI, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.UpdatedAt(); ok {
+		_spec.SetField(authorize.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := _u.mutation.Deleted(); ok {
+		_spec.SetField(authorize.FieldDeleted, field.TypeBool, value)
 	}
 	_node = &Authorize{config: _u.config}
 	_spec.Assign = _node.assignValues

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 	"teslatrack/internal/data/ent/authorize"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -13,9 +14,23 @@ import (
 
 // Authorize is the model entity for the Authorize schema.
 type Authorize struct {
-	config
+	config `json:"-"`
 	// ID of the ent.
-	ID           int `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
+	// 客户端ID
+	ClientID string `json:"client_id,omitempty"`
+	// 客户端密钥
+	ClientSecret string `json:"client_secret,omitempty"`
+	// 授权类型
+	GrantType string `json:"grant_type,omitempty"`
+	// 重定向URI
+	RedirectURI string `json:"redirect_uri,omitempty"`
+	// 创建时间
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// 更新时间
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 是否删除
+	Deleted      bool `json:"deleted,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -24,8 +39,14 @@ func (*Authorize) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case authorize.FieldDeleted:
+			values[i] = new(sql.NullBool)
 		case authorize.FieldID:
 			values[i] = new(sql.NullInt64)
+		case authorize.FieldClientID, authorize.FieldClientSecret, authorize.FieldGrantType, authorize.FieldRedirectURI:
+			values[i] = new(sql.NullString)
+		case authorize.FieldCreatedAt, authorize.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -47,6 +68,48 @@ func (_m *Authorize) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			_m.ID = int(value.Int64)
+		case authorize.FieldClientID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field client_id", values[i])
+			} else if value.Valid {
+				_m.ClientID = value.String
+			}
+		case authorize.FieldClientSecret:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field client_secret", values[i])
+			} else if value.Valid {
+				_m.ClientSecret = value.String
+			}
+		case authorize.FieldGrantType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field grant_type", values[i])
+			} else if value.Valid {
+				_m.GrantType = value.String
+			}
+		case authorize.FieldRedirectURI:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field redirect_uri", values[i])
+			} else if value.Valid {
+				_m.RedirectURI = value.String
+			}
+		case authorize.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				_m.CreatedAt = value.Time
+			}
+		case authorize.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				_m.UpdatedAt = value.Time
+			}
+		case authorize.FieldDeleted:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted", values[i])
+			} else if value.Valid {
+				_m.Deleted = value.Bool
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -82,7 +145,27 @@ func (_m *Authorize) Unwrap() *Authorize {
 func (_m *Authorize) String() string {
 	var builder strings.Builder
 	builder.WriteString("Authorize(")
-	builder.WriteString(fmt.Sprintf("id=%v", _m.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
+	builder.WriteString("client_id=")
+	builder.WriteString(_m.ClientID)
+	builder.WriteString(", ")
+	builder.WriteString("client_secret=")
+	builder.WriteString(_m.ClientSecret)
+	builder.WriteString(", ")
+	builder.WriteString("grant_type=")
+	builder.WriteString(_m.GrantType)
+	builder.WriteString(", ")
+	builder.WriteString("redirect_uri=")
+	builder.WriteString(_m.RedirectURI)
+	builder.WriteString(", ")
+	builder.WriteString("created_at=")
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Deleted))
 	builder.WriteByte(')')
 	return builder.String()
 }

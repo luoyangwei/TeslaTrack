@@ -4,8 +4,10 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"teslatrack/internal/data/ent/authorize"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -18,6 +20,72 @@ type AuthorizeCreate struct {
 	hooks    []Hook
 }
 
+// SetClientID sets the "client_id" field.
+func (_c *AuthorizeCreate) SetClientID(v string) *AuthorizeCreate {
+	_c.mutation.SetClientID(v)
+	return _c
+}
+
+// SetClientSecret sets the "client_secret" field.
+func (_c *AuthorizeCreate) SetClientSecret(v string) *AuthorizeCreate {
+	_c.mutation.SetClientSecret(v)
+	return _c
+}
+
+// SetGrantType sets the "grant_type" field.
+func (_c *AuthorizeCreate) SetGrantType(v string) *AuthorizeCreate {
+	_c.mutation.SetGrantType(v)
+	return _c
+}
+
+// SetRedirectURI sets the "redirect_uri" field.
+func (_c *AuthorizeCreate) SetRedirectURI(v string) *AuthorizeCreate {
+	_c.mutation.SetRedirectURI(v)
+	return _c
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (_c *AuthorizeCreate) SetCreatedAt(v time.Time) *AuthorizeCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (_c *AuthorizeCreate) SetNillableCreatedAt(v *time.Time) *AuthorizeCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
+	}
+	return _c
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (_c *AuthorizeCreate) SetUpdatedAt(v time.Time) *AuthorizeCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (_c *AuthorizeCreate) SetNillableUpdatedAt(v *time.Time) *AuthorizeCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
+	}
+	return _c
+}
+
+// SetDeleted sets the "deleted" field.
+func (_c *AuthorizeCreate) SetDeleted(v bool) *AuthorizeCreate {
+	_c.mutation.SetDeleted(v)
+	return _c
+}
+
+// SetNillableDeleted sets the "deleted" field if the given value is not nil.
+func (_c *AuthorizeCreate) SetNillableDeleted(v *bool) *AuthorizeCreate {
+	if v != nil {
+		_c.SetDeleted(*v)
+	}
+	return _c
+}
+
 // Mutation returns the AuthorizeMutation object of the builder.
 func (_c *AuthorizeCreate) Mutation() *AuthorizeMutation {
 	return _c.mutation
@@ -25,6 +93,7 @@ func (_c *AuthorizeCreate) Mutation() *AuthorizeMutation {
 
 // Save creates the Authorize in the database.
 func (_c *AuthorizeCreate) Save(ctx context.Context) (*Authorize, error) {
+	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -50,8 +119,45 @@ func (_c *AuthorizeCreate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (_c *AuthorizeCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		v := authorize.DefaultCreatedAt()
+		_c.mutation.SetCreatedAt(v)
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		v := authorize.DefaultUpdatedAt()
+		_c.mutation.SetUpdatedAt(v)
+	}
+	if _, ok := _c.mutation.Deleted(); !ok {
+		v := authorize.DefaultDeleted
+		_c.mutation.SetDeleted(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (_c *AuthorizeCreate) check() error {
+	if _, ok := _c.mutation.ClientID(); !ok {
+		return &ValidationError{Name: "client_id", err: errors.New(`ent: missing required field "Authorize.client_id"`)}
+	}
+	if _, ok := _c.mutation.ClientSecret(); !ok {
+		return &ValidationError{Name: "client_secret", err: errors.New(`ent: missing required field "Authorize.client_secret"`)}
+	}
+	if _, ok := _c.mutation.GrantType(); !ok {
+		return &ValidationError{Name: "grant_type", err: errors.New(`ent: missing required field "Authorize.grant_type"`)}
+	}
+	if _, ok := _c.mutation.RedirectURI(); !ok {
+		return &ValidationError{Name: "redirect_uri", err: errors.New(`ent: missing required field "Authorize.redirect_uri"`)}
+	}
+	if _, ok := _c.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Authorize.created_at"`)}
+	}
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Authorize.updated_at"`)}
+	}
+	if _, ok := _c.mutation.Deleted(); !ok {
+		return &ValidationError{Name: "deleted", err: errors.New(`ent: missing required field "Authorize.deleted"`)}
+	}
 	return nil
 }
 
@@ -78,6 +184,34 @@ func (_c *AuthorizeCreate) createSpec() (*Authorize, *sqlgraph.CreateSpec) {
 		_node = &Authorize{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(authorize.Table, sqlgraph.NewFieldSpec(authorize.FieldID, field.TypeInt))
 	)
+	if value, ok := _c.mutation.ClientID(); ok {
+		_spec.SetField(authorize.FieldClientID, field.TypeString, value)
+		_node.ClientID = value
+	}
+	if value, ok := _c.mutation.ClientSecret(); ok {
+		_spec.SetField(authorize.FieldClientSecret, field.TypeString, value)
+		_node.ClientSecret = value
+	}
+	if value, ok := _c.mutation.GrantType(); ok {
+		_spec.SetField(authorize.FieldGrantType, field.TypeString, value)
+		_node.GrantType = value
+	}
+	if value, ok := _c.mutation.RedirectURI(); ok {
+		_spec.SetField(authorize.FieldRedirectURI, field.TypeString, value)
+		_node.RedirectURI = value
+	}
+	if value, ok := _c.mutation.CreatedAt(); ok {
+		_spec.SetField(authorize.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := _c.mutation.UpdatedAt(); ok {
+		_spec.SetField(authorize.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := _c.mutation.Deleted(); ok {
+		_spec.SetField(authorize.FieldDeleted, field.TypeBool, value)
+		_node.Deleted = value
+	}
 	return _node, _spec
 }
 
@@ -99,6 +233,7 @@ func (_c *AuthorizeCreateBulk) Save(ctx context.Context) ([]*Authorize, error) {
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
+			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*AuthorizeMutation)
 				if !ok {

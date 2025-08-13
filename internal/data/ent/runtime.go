@@ -2,8 +2,30 @@
 
 package ent
 
+import (
+	"teslatrack/internal/data/ent/authorize"
+	"teslatrack/internal/data/ent/schema"
+	"time"
+)
+
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	authorizeFields := schema.Authorize{}.Fields()
+	_ = authorizeFields
+	// authorizeDescCreatedAt is the schema descriptor for created_at field.
+	authorizeDescCreatedAt := authorizeFields[4].Descriptor()
+	// authorize.DefaultCreatedAt holds the default value on creation for the created_at field.
+	authorize.DefaultCreatedAt = authorizeDescCreatedAt.Default.(func() time.Time)
+	// authorizeDescUpdatedAt is the schema descriptor for updated_at field.
+	authorizeDescUpdatedAt := authorizeFields[5].Descriptor()
+	// authorize.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	authorize.DefaultUpdatedAt = authorizeDescUpdatedAt.Default.(func() time.Time)
+	// authorize.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	authorize.UpdateDefaultUpdatedAt = authorizeDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// authorizeDescDeleted is the schema descriptor for deleted field.
+	authorizeDescDeleted := authorizeFields[6].Descriptor()
+	// authorize.DefaultDeleted holds the default value on creation for the deleted field.
+	authorize.DefaultDeleted = authorizeDescDeleted.Default.(bool)
 }

@@ -7,7 +7,9 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"teslatrack/internal/data/ent/authorize"
 	"teslatrack/internal/data/ent/predicate"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -31,6 +33,13 @@ type AuthorizeMutation struct {
 	op            Op
 	typ           string
 	id            *int
+	client_id     *string
+	client_secret *string
+	grant_type    *string
+	redirect_uri  *string
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted       *bool
 	clearedFields map[string]struct{}
 	done          bool
 	oldValue      func(context.Context) (*Authorize, error)
@@ -135,6 +144,258 @@ func (m *AuthorizeMutation) IDs(ctx context.Context) ([]int, error) {
 	}
 }
 
+// SetClientID sets the "client_id" field.
+func (m *AuthorizeMutation) SetClientID(s string) {
+	m.client_id = &s
+}
+
+// ClientID returns the value of the "client_id" field in the mutation.
+func (m *AuthorizeMutation) ClientID() (r string, exists bool) {
+	v := m.client_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClientID returns the old "client_id" field's value of the Authorize entity.
+// If the Authorize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeMutation) OldClientID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldClientID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldClientID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClientID: %w", err)
+	}
+	return oldValue.ClientID, nil
+}
+
+// ResetClientID resets all changes to the "client_id" field.
+func (m *AuthorizeMutation) ResetClientID() {
+	m.client_id = nil
+}
+
+// SetClientSecret sets the "client_secret" field.
+func (m *AuthorizeMutation) SetClientSecret(s string) {
+	m.client_secret = &s
+}
+
+// ClientSecret returns the value of the "client_secret" field in the mutation.
+func (m *AuthorizeMutation) ClientSecret() (r string, exists bool) {
+	v := m.client_secret
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClientSecret returns the old "client_secret" field's value of the Authorize entity.
+// If the Authorize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeMutation) OldClientSecret(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldClientSecret is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldClientSecret requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClientSecret: %w", err)
+	}
+	return oldValue.ClientSecret, nil
+}
+
+// ResetClientSecret resets all changes to the "client_secret" field.
+func (m *AuthorizeMutation) ResetClientSecret() {
+	m.client_secret = nil
+}
+
+// SetGrantType sets the "grant_type" field.
+func (m *AuthorizeMutation) SetGrantType(s string) {
+	m.grant_type = &s
+}
+
+// GrantType returns the value of the "grant_type" field in the mutation.
+func (m *AuthorizeMutation) GrantType() (r string, exists bool) {
+	v := m.grant_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGrantType returns the old "grant_type" field's value of the Authorize entity.
+// If the Authorize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeMutation) OldGrantType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGrantType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGrantType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGrantType: %w", err)
+	}
+	return oldValue.GrantType, nil
+}
+
+// ResetGrantType resets all changes to the "grant_type" field.
+func (m *AuthorizeMutation) ResetGrantType() {
+	m.grant_type = nil
+}
+
+// SetRedirectURI sets the "redirect_uri" field.
+func (m *AuthorizeMutation) SetRedirectURI(s string) {
+	m.redirect_uri = &s
+}
+
+// RedirectURI returns the value of the "redirect_uri" field in the mutation.
+func (m *AuthorizeMutation) RedirectURI() (r string, exists bool) {
+	v := m.redirect_uri
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRedirectURI returns the old "redirect_uri" field's value of the Authorize entity.
+// If the Authorize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeMutation) OldRedirectURI(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRedirectURI is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRedirectURI requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRedirectURI: %w", err)
+	}
+	return oldValue.RedirectURI, nil
+}
+
+// ResetRedirectURI resets all changes to the "redirect_uri" field.
+func (m *AuthorizeMutation) ResetRedirectURI() {
+	m.redirect_uri = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *AuthorizeMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *AuthorizeMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Authorize entity.
+// If the Authorize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *AuthorizeMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *AuthorizeMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *AuthorizeMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Authorize entity.
+// If the Authorize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *AuthorizeMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeleted sets the "deleted" field.
+func (m *AuthorizeMutation) SetDeleted(b bool) {
+	m.deleted = &b
+}
+
+// Deleted returns the value of the "deleted" field in the mutation.
+func (m *AuthorizeMutation) Deleted() (r bool, exists bool) {
+	v := m.deleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeleted returns the old "deleted" field's value of the Authorize entity.
+// If the Authorize object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AuthorizeMutation) OldDeleted(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeleted is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeleted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
+	}
+	return oldValue.Deleted, nil
+}
+
+// ResetDeleted resets all changes to the "deleted" field.
+func (m *AuthorizeMutation) ResetDeleted() {
+	m.deleted = nil
+}
+
 // Where appends a list predicates to the AuthorizeMutation builder.
 func (m *AuthorizeMutation) Where(ps ...predicate.Authorize) {
 	m.predicates = append(m.predicates, ps...)
@@ -169,7 +430,28 @@ func (m *AuthorizeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AuthorizeMutation) Fields() []string {
-	fields := make([]string, 0, 0)
+	fields := make([]string, 0, 7)
+	if m.client_id != nil {
+		fields = append(fields, authorize.FieldClientID)
+	}
+	if m.client_secret != nil {
+		fields = append(fields, authorize.FieldClientSecret)
+	}
+	if m.grant_type != nil {
+		fields = append(fields, authorize.FieldGrantType)
+	}
+	if m.redirect_uri != nil {
+		fields = append(fields, authorize.FieldRedirectURI)
+	}
+	if m.created_at != nil {
+		fields = append(fields, authorize.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, authorize.FieldUpdatedAt)
+	}
+	if m.deleted != nil {
+		fields = append(fields, authorize.FieldDeleted)
+	}
 	return fields
 }
 
@@ -177,6 +459,22 @@ func (m *AuthorizeMutation) Fields() []string {
 // return value indicates that this field was not set, or was not defined in the
 // schema.
 func (m *AuthorizeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case authorize.FieldClientID:
+		return m.ClientID()
+	case authorize.FieldClientSecret:
+		return m.ClientSecret()
+	case authorize.FieldGrantType:
+		return m.GrantType()
+	case authorize.FieldRedirectURI:
+		return m.RedirectURI()
+	case authorize.FieldCreatedAt:
+		return m.CreatedAt()
+	case authorize.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case authorize.FieldDeleted:
+		return m.Deleted()
+	}
 	return nil, false
 }
 
@@ -184,6 +482,22 @@ func (m *AuthorizeMutation) Field(name string) (ent.Value, bool) {
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
 func (m *AuthorizeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case authorize.FieldClientID:
+		return m.OldClientID(ctx)
+	case authorize.FieldClientSecret:
+		return m.OldClientSecret(ctx)
+	case authorize.FieldGrantType:
+		return m.OldGrantType(ctx)
+	case authorize.FieldRedirectURI:
+		return m.OldRedirectURI(ctx)
+	case authorize.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case authorize.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case authorize.FieldDeleted:
+		return m.OldDeleted(ctx)
+	}
 	return nil, fmt.Errorf("unknown Authorize field %s", name)
 }
 
@@ -192,6 +506,55 @@ func (m *AuthorizeMutation) OldField(ctx context.Context, name string) (ent.Valu
 // type.
 func (m *AuthorizeMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case authorize.FieldClientID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClientID(v)
+		return nil
+	case authorize.FieldClientSecret:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClientSecret(v)
+		return nil
+	case authorize.FieldGrantType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGrantType(v)
+		return nil
+	case authorize.FieldRedirectURI:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRedirectURI(v)
+		return nil
+	case authorize.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case authorize.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case authorize.FieldDeleted:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeleted(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Authorize field %s", name)
 }
@@ -213,6 +576,8 @@ func (m *AuthorizeMutation) AddedField(name string) (ent.Value, bool) {
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
 func (m *AuthorizeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Authorize numeric field %s", name)
 }
 
@@ -238,6 +603,29 @@ func (m *AuthorizeMutation) ClearField(name string) error {
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
 func (m *AuthorizeMutation) ResetField(name string) error {
+	switch name {
+	case authorize.FieldClientID:
+		m.ResetClientID()
+		return nil
+	case authorize.FieldClientSecret:
+		m.ResetClientSecret()
+		return nil
+	case authorize.FieldGrantType:
+		m.ResetGrantType()
+		return nil
+	case authorize.FieldRedirectURI:
+		m.ResetRedirectURI()
+		return nil
+	case authorize.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case authorize.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case authorize.FieldDeleted:
+		m.ResetDeleted()
+		return nil
+	}
 	return fmt.Errorf("unknown Authorize field %s", name)
 }
 
