@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package api.teslatrack.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "teslatrack/api/teslatrack/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.teslatrack.v1";
+
+// The Authorize service provides methods for managing OAuth 2.0 clients.
+service Authorize {
+	// CreateAuthorize creates a new OAuth 2.0 client.
+	// This is typically an administrative operation.
+	rpc CreateAuthorize (CreateAuthorizeRequest) returns (CreateAuthorizeReply) {
+        option (google.api.http) = {
+            // Defines the HTTP endpoint for this RPC.
+            post: "/api/v1/authorize"
+            body: "*"
+        };
+    }
+}
+
+// The request message for creating a new authorization client.
+message CreateAuthorizeRequest {
+    // The client identifier. Must be unique.
+    string clientId = 1;
+    // The client secret. A confidential value.
+    string clientSecret = 2;
+    // The grant type the client is allowed to use (e.g., "authorization_code").
+    string grantType = 3;
+    // The URI to redirect to after authorization.
+    string redirectURI = 4;
+}
+
+// The reply message containing the ID of the newly created authorization client.
+message CreateAuthorizeReply {
+    // The unique ID of the created authorization client.
+    // int64 id = 1;
+}
