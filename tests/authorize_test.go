@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"testing"
 
@@ -82,7 +83,10 @@ func TestRedirect(t *testing.T) {
 
 	var reply redirectReply
 	_ = json.Unmarshal(responseBody, &reply)
-	fmt.Printf("responseBody: %+v \n", reply)
+	fmt.Printf("responseBody: %+v \n\n", reply)
+
+	teslaAuthorizeUrl := "https://auth.tesla.cn/oauth2/v3/authorize?&client_id=" + os.Getenv("TESLA_CLIENT_ID") + "&locale=en-US&prompt=login&redirect_uri=" + reply.RedirectUri + "&response_type=code&scope=" + url.QueryEscape(reply.Scope) + "&state=" + reply.State
+	fmt.Println(teslaAuthorizeUrl)
 }
 
 func TestCallback(t *testing.T) {
