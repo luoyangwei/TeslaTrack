@@ -1,0 +1,15 @@
+[Unit]
+Description=teslatrack api server
+
+[Service]
+User=root
+Group=root
+Type=simple
+WorkingDirectory=/opt/TeslaTrack
+ExecStart=/opt/TeslaTrack/bin/teslatrack --conf /opt/TeslaTrack/configs/prod.yaml
+Restart=on-failure
+RestartSec=20s
+LimitNOFILE=infinity
+
+[Install]
+WantedBy=multi-user.target

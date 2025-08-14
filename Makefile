@@ -80,3 +80,22 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
 .DEFAULT_GOAL := help
+
+.PHONY: run
+# run
+run:
+        cp ./teslatrack.service /etc/systemd/system/
+        systemctl daemon-reload
+        systemctl enable teslatrack.service
+        systemctl start teslatrack.service
+
+.PHONY: stop
+# stop
+stop:
+        systemctl stop teslatrack.service
+
+.PHONY: restart
+# restart
+restart:
+        systemctl stop teslatrack.service
+        systemctl start teslatrack.service
