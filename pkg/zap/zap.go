@@ -3,10 +3,12 @@ package zap
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	kratoslog "github.com/go-kratos/kratos/v2/log"
 	zaplog "go.uber.org/zap"
 	zapcore "go.uber.org/zap/zapcore"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 var _ kratoslog.Logger = (*ZapLogger)(nil)
@@ -15,6 +17,43 @@ var _ kratoslog.Logger = (*ZapLogger)(nil)
 type ZapLogger struct {
 	log  *zaplog.Logger
 	Sync func() error
+}
+
+type LumberjackConfig struct {
+	Enable     bool
+	Filename   string
+	MaxSize    int
+	MaxAge     int
+	MaxBackups int
+	Compress   bool
+}
+
+func newLumberjackConfig() LumberjackConfig {
+	envMaxSize := os.Getenv("LUMBERJACK_MAX_SIZE")
+	if envMaxSize == "" {
+		envMaxSize = "0"
+	}
+	maxSize, _ := strconv.Atoi(envMaxSize)
+
+	envMaxAge := os.Getenv("LUMBERJACK_MAX_SIZE")
+	if envMaxAge == "" {
+		envMaxAge = "0"
+	}
+	maxAge, _ := strconv.Atoi(envMaxAge)
+
+	envMaxBackups := os.Getenv("LUMBERJACK_MAX_SIZE")
+	if envMaxBackups == "" {
+		envMaxBackups = "0"
+	}
+	maxBackups, _ := strconv.Atoi(envMaxBackups)
+	return LumberjackConfig{
+		Enable:     os.Getenv("LUMBERJACK_ENABLE") == "true",
+		Filename:   os.Getenv("LUMBERJACK_FILE_NAME"),
+		MaxSize:    maxSize,
+		MaxAge:     maxAge,
+		MaxBackups: maxBackups,
+		Compress:   true,
+	}
 }
 
 // Log Implementation of logger interface.
@@ -43,11 +82,23 @@ func (l *ZapLogger) Log(level kratoslog.Level, keyvals ...interface{}) error {
 
 // NewZapLogger return a zap logger.
 func NewZapLogger(encoder zapcore.EncoderConfig, level zaplog.AtomicLevel, opts ...zaplog.Option) *ZapLogger {
+	ws := make([]zapcore.WriteSyncer, 0)
+	ws = append(ws, zapcore.AddSync(os.Stdout))
+
+	lumberjackConfig := newLumberjackConfig()
+	if lumberjackConfig.Enable {
+		ws = append(ws, zapcore.AddSync(&lumberjack.Logger{
+			Filename:   lumberjackConfig.Filename,
+			MaxSize:    lumberjackConfig.MaxSize,
+			MaxAge:     lumberjackConfig.MaxAge,
+			MaxBackups: lumberjackConfig.MaxBackups,
+			Compress:   lumberjackConfig.Compress,
+		}))
+	}
+
 	core := zapcore.NewCore(
 		zapcore.NewConsoleEncoder(encoder),
-		zapcore.NewMultiWriteSyncer(
-			zapcore.AddSync(os.Stdout),
-		), level)
+		zapcore.NewMultiWriteSyncer(ws...), level)
 	zapLogger := zaplog.New(core, opts...)
 	return &ZapLogger{log: zapLogger, Sync: zapLogger.Sync}
 }
