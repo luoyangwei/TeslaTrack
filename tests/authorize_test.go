@@ -15,7 +15,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const DEFAULT_SERVER_HOST = "http://127.0.0.1:8000"
+const DEFAULT_SERVER_HOST = "http://127.0.0.1:8100"
 
 var (
 	// createAuthorizeUrl
