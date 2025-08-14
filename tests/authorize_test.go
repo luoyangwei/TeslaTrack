@@ -20,7 +20,7 @@ const DEFAULT_SERVER_HOST = "http://127.0.0.1:8100"
 var (
 	// createAuthorizeUrl
 	createAuthorizeUrl   = DEFAULT_SERVER_HOST + "/api/v1/authorize"
-	callbaclAuthorizeUrl = DEFAULT_SERVER_HOST + "/api/v1/authorize/callback"
+	callbackAuthorizeUrl = DEFAULT_SERVER_HOST + "/api/v1/authorize/callback"
 	redirectAuthorizeUrl = DEFAULT_SERVER_HOST + "/api/v1/authorize/redirect"
 )
 
@@ -91,5 +91,5 @@ func TestRedirect(t *testing.T) {
 
 func TestCallback(t *testing.T) {
 	id, _ := uuid.NewV7()
-	http.Get(callbaclAuthorizeUrl + "?code=" + id.String())
+	http.Get(callbackAuthorizeUrl + "?code=" + id.String())
 }
