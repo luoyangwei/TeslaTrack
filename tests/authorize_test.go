@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 )
 
@@ -16,7 +18,9 @@ const DEFAULT_SERVER_HOST = "http://127.0.0.1:8000"
 
 var (
 	// createAuthorizeUrl
-	createAuthorizeUrl = DEFAULT_SERVER_HOST + "/api/v1/authorize"
+	createAuthorizeUrl   = DEFAULT_SERVER_HOST + "/api/v1/authorize"
+	callbaclAuthorizeUrl = DEFAULT_SERVER_HOST + "/api/v1/authorize/callback"
+	redirectAuthorizeUrl = DEFAULT_SERVER_HOST + "/api/v1/authorize/redirect"
 )
 
 type createAuthorize struct {
@@ -47,4 +51,41 @@ func TestCreateAuthorize(t *testing.T) {
 	}
 
 	fmt.Printf("statusCode: %d, status:%s \n", response.StatusCode, response.Status)
+}
+
+type (
+	redirectRequest struct {
+		ClientId string `json:"clientId"`
+	}
+	redirectReply struct {
+		Scope                  string `json:"scope"`
+		State                  string `json:"state"`
+		Nonce                  string `json:"nonce"`
+		PromptMissingScopes    bool   `json:"promptMissingScopes"`
+		RequireRequestedScopes bool   `json:"requireRequestedScopes"`
+		RedirectUri            string `json:"redirectUri"`
+	}
+)
+
+func TestRedirect(t *testing.T) {
+	request := redirectRequest{
+		ClientId: os.Getenv("TESLA_CLIENT_ID"),
+	}
+	body, _ := json.Marshal(request)
+	response, err := http.Post(redirectAuthorizeUrl, "application/json", bytes.NewReader(body))
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("statusCode: %d, status:%s \n", response.StatusCode, response.Status)
+
+	responseBody, _ := io.ReadAll(response.Body)
+
+	var reply redirectReply
+	_ = json.Unmarshal(responseBody, &reply)
+	fmt.Printf("responseBody: %+v \n", reply)
+}
+
+func TestCallback(t *testing.T) {
+	id, _ := uuid.NewV7()
+	http.Get(callbaclAuthorizeUrl + "?code=" + id.String())
 }

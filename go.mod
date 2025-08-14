@@ -8,6 +8,7 @@ require (
 	entgo.io/ent v0.14.5
 	github.com/go-kratos/kratos/v2 v2.8.0
 	github.com/go-sql-driver/mysql v1.9.3
+	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
 	github.com/joho/godotenv v1.5.1
 	go.uber.org/automaxprocs v1.5.1
@@ -29,7 +30,6 @@ require (
 	github.com/go-openapi/inflect v0.19.0 // indirect
 	github.com/go-playground/form/v4 v4.2.1 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/hashicorp/hcl/v2 v2.18.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect

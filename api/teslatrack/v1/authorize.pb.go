@@ -95,7 +95,7 @@ func (x *CreateAuthorizeRequest) GetRedirectURI() string {
 	return ""
 }
 
-// The reply message containing the ID of the newly created authorization client.
+// The reply message for CreateAuthorize. Currently empty.
 type CreateAuthorizeReply struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -132,9 +132,10 @@ func (*CreateAuthorizeReply) Descriptor() ([]byte, []int) {
 	return file_teslatrack_v1_authorize_proto_rawDescGZIP(), []int{1}
 }
 
+// The request message for the authorization callback.
 type CallbackRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// callback code
+	// The authorization code returned by the OAuth provider.
 	Code          string `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -177,6 +178,7 @@ func (x *CallbackRequest) GetCode() string {
 	return ""
 }
 
+// The reply message for the authorization callback. Currently empty.
 type CallbackReply struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -213,6 +215,143 @@ func (*CallbackReply) Descriptor() ([]byte, []int) {
 	return file_teslatrack_v1_authorize_proto_rawDescGZIP(), []int{3}
 }
 
+// The request message for initiating an authorization redirect.
+type RedirectRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The client ID for which to initiate the authorization flow.
+	ClientId      string `protobuf:"bytes,1,opt,name=clientId,proto3" json:"clientId,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RedirectRequest) Reset() {
+	*x = RedirectRequest{}
+	mi := &file_teslatrack_v1_authorize_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RedirectRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RedirectRequest) ProtoMessage() {}
+
+func (x *RedirectRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_teslatrack_v1_authorize_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RedirectRequest.ProtoReflect.Descriptor instead.
+func (*RedirectRequest) Descriptor() ([]byte, []int) {
+	return file_teslatrack_v1_authorize_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *RedirectRequest) GetClientId() string {
+	if x != nil {
+		return x.ClientId
+	}
+	return ""
+}
+
+// The reply message containing parameters for the authorization redirect URL.
+type RedirectReply struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The requested scope of permissions.
+	Scope string `protobuf:"bytes,1,opt,name=scope,proto3" json:"scope,omitempty"`
+	// A random string generated to prevent CSRF attacks.
+	State string `protobuf:"bytes,2,opt,name=state,proto3" json:"state,omitempty"`
+	// A random string generated to prevent replay attacks.
+	Nonce string `protobuf:"bytes,3,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	// Whether to prompt the user for missing scopes.
+	PromptMissingScopes bool `protobuf:"varint,4,opt,name=promptMissingScopes,proto3" json:"promptMissingScopes,omitempty"`
+	// Whether to require all requested scopes to be granted.
+	RequireRequestedScopes bool `protobuf:"varint,5,opt,name=requireRequestedScopes,proto3" json:"requireRequestedScopes,omitempty"`
+	// The URI to which the provider will redirect the user.
+	RedirectUri   string `protobuf:"bytes,6,opt,name=redirectUri,proto3" json:"redirectUri,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RedirectReply) Reset() {
+	*x = RedirectReply{}
+	mi := &file_teslatrack_v1_authorize_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RedirectReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RedirectReply) ProtoMessage() {}
+
+func (x *RedirectReply) ProtoReflect() protoreflect.Message {
+	mi := &file_teslatrack_v1_authorize_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RedirectReply.ProtoReflect.Descriptor instead.
+func (*RedirectReply) Descriptor() ([]byte, []int) {
+	return file_teslatrack_v1_authorize_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *RedirectReply) GetScope() string {
+	if x != nil {
+		return x.Scope
+	}
+	return ""
+}
+
+func (x *RedirectReply) GetState() string {
+	if x != nil {
+		return x.State
+	}
+	return ""
+}
+
+func (x *RedirectReply) GetNonce() string {
+	if x != nil {
+		return x.Nonce
+	}
+	return ""
+}
+
+func (x *RedirectReply) GetPromptMissingScopes() bool {
+	if x != nil {
+		return x.PromptMissingScopes
+	}
+	return false
+}
+
+func (x *RedirectReply) GetRequireRequestedScopes() bool {
+	if x != nil {
+		return x.RequireRequestedScopes
+	}
+	return false
+}
+
+func (x *RedirectReply) GetRedirectUri() string {
+	if x != nil {
+		return x.RedirectUri
+	}
+	return ""
+}
+
 var File_teslatrack_v1_authorize_proto protoreflect.FileDescriptor
 
 const file_teslatrack_v1_authorize_proto_rawDesc = "" +
@@ -226,9 +365,19 @@ const file_teslatrack_v1_authorize_proto_rawDesc = "" +
 	"\x14CreateAuthorizeReply\"%\n" +
 	"\x0fCallbackRequest\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\"\x0f\n" +
-	"\rCallbackReply2\x87\x02\n" +
+	"\rCallbackReply\"-\n" +
+	"\x0fRedirectRequest\x12\x1a\n" +
+	"\bclientId\x18\x01 \x01(\tR\bclientId\"\xdd\x01\n" +
+	"\rRedirectReply\x12\x14\n" +
+	"\x05scope\x18\x01 \x01(\tR\x05scope\x12\x14\n" +
+	"\x05state\x18\x02 \x01(\tR\x05state\x12\x14\n" +
+	"\x05nonce\x18\x03 \x01(\tR\x05nonce\x120\n" +
+	"\x13promptMissingScopes\x18\x04 \x01(\bR\x13promptMissingScopes\x126\n" +
+	"\x16requireRequestedScopes\x18\x05 \x01(\bR\x16requireRequestedScopes\x12 \n" +
+	"\vredirectUri\x18\x06 \x01(\tR\vredirectUri2\x80\x03\n" +
 	"\tAuthorize\x12\x83\x01\n" +
-	"\x0fCreateAuthorize\x12).api.teslatrack.v1.CreateAuthorizeRequest\x1a'.api.teslatrack.v1.CreateAuthorizeReply\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/api/v1/authorize\x12t\n" +
+	"\x0fCreateAuthorize\x12).api.teslatrack.v1.CreateAuthorizeRequest\x1a'.api.teslatrack.v1.CreateAuthorizeReply\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/api/v1/authorize\x12w\n" +
+	"\bRedirect\x12\".api.teslatrack.v1.RedirectRequest\x1a .api.teslatrack.v1.RedirectReply\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\"\x1a/api/v1/authorize/redirect\x12t\n" +
 	"\bCallback\x12\".api.teslatrack.v1.CallbackRequest\x1a .api.teslatrack.v1.CallbackReply\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/api/v1/authorize/callbackB6\n" +
 	"\x11api.teslatrack.v1P\x01Z\x1fteslatrack/api/teslatrack/v1;v1b\x06proto3"
 
@@ -244,20 +393,24 @@ func file_teslatrack_v1_authorize_proto_rawDescGZIP() []byte {
 	return file_teslatrack_v1_authorize_proto_rawDescData
 }
 
-var file_teslatrack_v1_authorize_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_teslatrack_v1_authorize_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_teslatrack_v1_authorize_proto_goTypes = []any{
 	(*CreateAuthorizeRequest)(nil), // 0: api.teslatrack.v1.CreateAuthorizeRequest
 	(*CreateAuthorizeReply)(nil),   // 1: api.teslatrack.v1.CreateAuthorizeReply
 	(*CallbackRequest)(nil),        // 2: api.teslatrack.v1.CallbackRequest
 	(*CallbackReply)(nil),          // 3: api.teslatrack.v1.CallbackReply
+	(*RedirectRequest)(nil),        // 4: api.teslatrack.v1.RedirectRequest
+	(*RedirectReply)(nil),          // 5: api.teslatrack.v1.RedirectReply
 }
 var file_teslatrack_v1_authorize_proto_depIdxs = []int32{
 	0, // 0: api.teslatrack.v1.Authorize.CreateAuthorize:input_type -> api.teslatrack.v1.CreateAuthorizeRequest
-	2, // 1: api.teslatrack.v1.Authorize.Callback:input_type -> api.teslatrack.v1.CallbackRequest
-	1, // 2: api.teslatrack.v1.Authorize.CreateAuthorize:output_type -> api.teslatrack.v1.CreateAuthorizeReply
-	3, // 3: api.teslatrack.v1.Authorize.Callback:output_type -> api.teslatrack.v1.CallbackReply
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	4, // 1: api.teslatrack.v1.Authorize.Redirect:input_type -> api.teslatrack.v1.RedirectRequest
+	2, // 2: api.teslatrack.v1.Authorize.Callback:input_type -> api.teslatrack.v1.CallbackRequest
+	1, // 3: api.teslatrack.v1.Authorize.CreateAuthorize:output_type -> api.teslatrack.v1.CreateAuthorizeReply
+	5, // 4: api.teslatrack.v1.Authorize.Redirect:output_type -> api.teslatrack.v1.RedirectReply
+	3, // 5: api.teslatrack.v1.Authorize.Callback:output_type -> api.teslatrack.v1.CallbackReply
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -274,7 +427,7 @@ func file_teslatrack_v1_authorize_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_teslatrack_v1_authorize_proto_rawDesc), len(file_teslatrack_v1_authorize_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

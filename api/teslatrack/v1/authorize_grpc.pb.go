@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Authorize_CreateAuthorize_FullMethodName = "/api.teslatrack.v1.Authorize/CreateAuthorize"
+	Authorize_Redirect_FullMethodName        = "/api.teslatrack.v1.Authorize/Redirect"
 	Authorize_Callback_FullMethodName        = "/api.teslatrack.v1.Authorize/Callback"
 )
 
@@ -27,11 +28,15 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// The Authorize service provides methods for managing OAuth 2.0 clients.
+// The Authorize service provides methods for managing the OAuth 2.0 authorization flow.
 type AuthorizeClient interface {
-	// CreateAuthorize creates a new OAuth 2.0 client.
-	// This is typically an administrative operation.
+	// CreateAuthorize creates a new OAuth 2.0 client configuration.
+	// This is typically an administrative operation to register a new client.
 	CreateAuthorize(ctx context.Context, in *CreateAuthorizeRequest, opts ...grpc.CallOption) (*CreateAuthorizeReply, error)
+	// Redirect generates the authorization URL and redirects the user to the OAuth provider.
+	Redirect(ctx context.Context, in *RedirectRequest, opts ...grpc.CallOption) (*RedirectReply, error)
+	// Callback is the endpoint that the OAuth provider calls after user authorization.
+	// It receives the authorization code needed to exchange for an access token.
 	Callback(ctx context.Context, in *CallbackRequest, opts ...grpc.CallOption) (*CallbackReply, error)
 }
 
@@ -53,6 +58,16 @@ func (c *authorizeClient) CreateAuthorize(ctx context.Context, in *CreateAuthori
 	return out, nil
 }
 
+func (c *authorizeClient) Redirect(ctx context.Context, in *RedirectRequest, opts ...grpc.CallOption) (*RedirectReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RedirectReply)
+	err := c.cc.Invoke(ctx, Authorize_Redirect_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *authorizeClient) Callback(ctx context.Context, in *CallbackRequest, opts ...grpc.CallOption) (*CallbackReply, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CallbackReply)
@@ -67,11 +82,15 @@ func (c *authorizeClient) Callback(ctx context.Context, in *CallbackRequest, opt
 // All implementations must embed UnimplementedAuthorizeServer
 // for forward compatibility.
 //
-// The Authorize service provides methods for managing OAuth 2.0 clients.
+// The Authorize service provides methods for managing the OAuth 2.0 authorization flow.
 type AuthorizeServer interface {
-	// CreateAuthorize creates a new OAuth 2.0 client.
-	// This is typically an administrative operation.
+	// CreateAuthorize creates a new OAuth 2.0 client configuration.
+	// This is typically an administrative operation to register a new client.
 	CreateAuthorize(context.Context, *CreateAuthorizeRequest) (*CreateAuthorizeReply, error)
+	// Redirect generates the authorization URL and redirects the user to the OAuth provider.
+	Redirect(context.Context, *RedirectRequest) (*RedirectReply, error)
+	// Callback is the endpoint that the OAuth provider calls after user authorization.
+	// It receives the authorization code needed to exchange for an access token.
 	Callback(context.Context, *CallbackRequest) (*CallbackReply, error)
 	mustEmbedUnimplementedAuthorizeServer()
 }
@@ -85,6 +104,9 @@ type UnimplementedAuthorizeServer struct{}
 
 func (UnimplementedAuthorizeServer) CreateAuthorize(context.Context, *CreateAuthorizeRequest) (*CreateAuthorizeReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAuthorize not implemented")
+}
+func (UnimplementedAuthorizeServer) Redirect(context.Context, *RedirectRequest) (*RedirectReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Redirect not implemented")
 }
 func (UnimplementedAuthorizeServer) Callback(context.Context, *CallbackRequest) (*CallbackReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Callback not implemented")
@@ -128,6 +150,24 @@ func _Authorize_CreateAuthorize_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Authorize_Redirect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RedirectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthorizeServer).Redirect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Authorize_Redirect_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthorizeServer).Redirect(ctx, req.(*RedirectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Authorize_Callback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CallbackRequest)
 	if err := dec(in); err != nil {
@@ -156,6 +196,10 @@ var Authorize_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateAuthorize",
 			Handler:    _Authorize_CreateAuthorize_Handler,
+		},
+		{
+			MethodName: "Redirect",
+			Handler:    _Authorize_Redirect_Handler,
 		},
 		{
 			MethodName: "Callback",

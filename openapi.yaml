@@ -11,8 +11,8 @@ paths:
             tags:
                 - Authorize
             description: |-
-                CreateAuthorize creates a new OAuth 2.0 client.
-                 This is typically an administrative operation.
+                CreateAuthorize creates a new OAuth 2.0 client configuration.
+                 This is typically an administrative operation to register a new client.
             operationId: Authorize_CreateAuthorize
             requestBody:
                 content:
@@ -31,11 +31,14 @@ paths:
         get:
             tags:
                 - Authorize
+            description: |-
+                Callback is the endpoint that the OAuth provider calls after user authorization.
+                 It receives the authorization code needed to exchange for an access token.
             operationId: Authorize_Callback
             parameters:
                 - name: code
                   in: query
-                  description: callback code
+                  description: The authorization code returned by the OAuth provider.
                   schema:
                     type: string
             responses:
@@ -45,6 +48,25 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.teslatrack.v1.CallbackReply'
+    /api/v1/authorize/redirect:
+        post:
+            tags:
+                - Authorize
+            description: Redirect generates the authorization URL and redirects the user to the OAuth provider.
+            operationId: Authorize_Redirect
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.teslatrack.v1.RedirectRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.teslatrack.v1.RedirectReply'
     /helloworld/{name}:
         get:
             tags:
@@ -69,10 +91,11 @@ components:
         api.teslatrack.v1.CallbackReply:
             type: object
             properties: {}
+            description: The reply message for the authorization callback. Currently empty.
         api.teslatrack.v1.CreateAuthorizeReply:
             type: object
             properties: {}
-            description: The reply message containing the ID of the newly created authorization client.
+            description: The reply message for CreateAuthorize. Currently empty.
         api.teslatrack.v1.CreateAuthorizeRequest:
             type: object
             properties:
@@ -89,6 +112,35 @@ components:
                     type: string
                     description: The URI to redirect to after authorization.
             description: The request message for creating a new authorization client.
+        api.teslatrack.v1.RedirectReply:
+            type: object
+            properties:
+                scope:
+                    type: string
+                    description: The requested scope of permissions.
+                state:
+                    type: string
+                    description: A random string generated to prevent CSRF attacks.
+                nonce:
+                    type: string
+                    description: A random string generated to prevent replay attacks.
+                promptMissingScopes:
+                    type: boolean
+                    description: Whether to prompt the user for missing scopes.
+                requireRequestedScopes:
+                    type: boolean
+                    description: Whether to require all requested scopes to be granted.
+                redirectUri:
+                    type: string
+                    description: The URI to which the provider will redirect the user.
+            description: The reply message containing parameters for the authorization redirect URL.
+        api.teslatrack.v1.RedirectRequest:
+            type: object
+            properties:
+                clientId:
+                    type: string
+                    description: The client ID for which to initiate the authorization flow.
+            description: The request message for initiating an authorization redirect.
         helloworld.v1.HelloReply:
             type: object
             properties:
@@ -97,6 +149,6 @@ components:
             description: The response message containing the greetings
 tags:
     - name: Authorize
-      description: The Authorize service provides methods for managing OAuth 2.0 clients.
+      description: The Authorize service provides methods for managing the OAuth 2.0 authorization flow.
     - name: Greeter
       description: The greeting service definition.

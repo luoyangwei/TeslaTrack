@@ -35,7 +35,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	redirector := server.NewRedirector(greeterService)
 	authorizeRepo := data.NewAuthorizeRepo(dataData)
 	authorizeUsecase := biz.NewAuthorizeUsecase(authorizeRepo, logger)
-	authorizeService := service.NewAuthorizeService(authorizeUsecase)
+	authorizeService := service.NewAuthorizeService(authorizeUsecase, logger)
 	httpServer := server.NewHTTPServer(confServer, redirector, greeterService, authorizeService, logger)
 	app := newApp(logger, grpcServer, httpServer)
 	return app, func() {

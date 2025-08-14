@@ -5,7 +5,20 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/google/uuid"
 )
+
+// ALL_SCOPES defines the full list of permissions the application can request from Tesla's API.
+// - openid: Allows login with Tesla credentials.
+// - offline_access: Allows obtaining a refresh token for offline access.
+// - user_data: Access to user profile information.
+// - vehicle_device_data: Access to vehicle information and real-time data.
+// - vehicle_location: Access to vehicle location information.
+// - vehicle_cmds: Allows sending commands to the vehicle (e.g., unlock, start).
+// - vehicle_charging_cmds: Allows managing vehicle charging.
+// - energy_device_data: Access to energy product information (e.g., Powerwall).
+// - energy_cmds: Allows sending commands to energy products.
+const ALL_SCOPES = "openid offline_access user_data vehicle_device_data vehicle_location vehicle_cmds vehicle_charging_cmds energy_device_data energy_cmds"
 
 // Authorize is the data model for OAuth 2.0 client authorization.
 // It holds the necessary information for a client to obtain an access token.
@@ -61,7 +74,46 @@ func (uc *AuthorizeUsecase) FindByClientID(ctx context.Context, clientID string)
 	return uc.repo.FindByClientID(ctx, clientID)
 }
 
-// Callback
+// Callback handles the authorization code received from the OAuth provider.
+// It is responsible for exchanging the code for an access token.
+// NOTE: This method is a stub and its implementation is pending.
 func (uc *AuthorizeUsecase) Callback(ctx context.Context, code string) error {
 	return nil
+}
+
+// AuthorizeEncodeRedirect holds the parameters needed to construct the redirect URL
+// for the Tesla OAuth 2.0 authorization flow.
+type AuthorizeEncodeRedirect struct {
+	ClientID               string `json:"clientId"`
+	RedirectURI            string `json:"redirectUri"`
+	Scope                  string `json:"scope"`
+	State                  string `json:"state"`
+	Nonce                  string `json:"nonce"`
+	PromptMissingScopes    bool   `json:"promptMissingScopes"`
+	RequireRequestedScopes bool   `json:"requireRequestedScopes"`
+}
+
+// Redirect prepares the necessary parameters for the authorization redirect.
+// It fetches client details, generates a secure state and nonce, and returns them.
+func (uc *AuthorizeUsecase) Redirect(ctx context.Context, clientID string) (*AuthorizeEncodeRedirect, error) {
+	// Fetch the client's authorization configuration.
+	authorize, err := uc.repo.FindByClientID(ctx, clientID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Generate a unique and non-guessable value for state and nonce to prevent CSRF and replay attacks.
+	state, _ := uuid.NewV7()
+	nonce, _ := uuid.NewV7()
+
+	// Construct the redirect parameters.
+	return &AuthorizeEncodeRedirect{
+		ClientID:               authorize.ClientID,
+		RedirectURI:            authorize.RedirectURI,
+		Scope:                  ALL_SCOPES,
+		State:                  state.String(),
+		Nonce:                  nonce.String(),
+		PromptMissingScopes:    false, // These could be configurable in the future.
+		RequireRequestedScopes: false,
+	}, nil
 }

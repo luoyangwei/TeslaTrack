@@ -8,20 +8,32 @@ option go_package = "teslatrack/api/teslatrack/v1;v1";
 option java_multiple_files = true;
 option java_package = "api.teslatrack.v1";
 
-// The Authorize service provides methods for managing OAuth 2.0 clients.
+// The Authorize service provides methods for managing the OAuth 2.0 authorization flow.
 service Authorize {
-	// CreateAuthorize creates a new OAuth 2.0 client.
-	// This is typically an administrative operation.
+	// CreateAuthorize creates a new OAuth 2.0 client configuration.
+	// This is typically an administrative operation to register a new client.
 	rpc CreateAuthorize (CreateAuthorizeRequest) returns (CreateAuthorizeReply) {
         option (google.api.http) = {
             // Defines the HTTP endpoint for this RPC.
-            post: "/api/v1/authorize"
+            post: "/api/v1/authorize",
+            body: "*"
+        };
+    }
+
+    // Redirect generates the authorization URL and redirects the user to the OAuth provider.
+    rpc Redirect (RedirectRequest) returns (RedirectReply) {
+        option (google.api.http) = {
+            // Defines the HTTP endpoint for initiating the redirect.
+            post: "/api/v1/authorize/redirect",
             body: "*"
         };
     }
     
+    // Callback is the endpoint that the OAuth provider calls after user authorization.
+    // It receives the authorization code needed to exchange for an access token.
     rpc Callback(CallbackRequest) returns (CallbackReply) {
         option (google.api.http) = {
+            // Defines the HTTP endpoint for the callback.
             get: "/api/v1/authorize/callback"
         };
     }
@@ -39,17 +51,40 @@ message CreateAuthorizeRequest {
     string redirectURI = 4;
 }
 
-// The reply message containing the ID of the newly created authorization client.
+// The reply message for CreateAuthorize. Currently empty.
 message CreateAuthorizeReply {
-    // The unique ID of the created authorization client.
+    // The unique ID of the created authorization client was previously here.
     // int64 id = 1;
 }
 
-
+// The request message for the authorization callback.
 message CallbackRequest {
-    // callback code
+    // The authorization code returned by the OAuth provider.
     string code = 1;
 }
 
+// The reply message for the authorization callback. Currently empty.
 message CallbackReply {
+}
+
+// The request message for initiating an authorization redirect.
+message RedirectRequest {
+    // The client ID for which to initiate the authorization flow.
+    string clientId = 1;
+}
+
+// The reply message containing parameters for the authorization redirect URL.
+message RedirectReply {
+    // The requested scope of permissions.
+    string scope = 1;
+    // A random string generated to prevent CSRF attacks.
+    string state = 2;
+    // A random string generated to prevent replay attacks.
+    string nonce = 3;
+    // Whether to prompt the user for missing scopes.
+    bool promptMissingScopes = 4;
+    // Whether to require all requested scopes to be granted.
+    bool requireRequestedScopes = 5;
+    // The URI to which the provider will redirect the user.
+    string redirectUri = 6;
 }

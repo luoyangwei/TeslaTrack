@@ -21,17 +21,23 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationAuthorizeCallback = "/api.teslatrack.v1.Authorize/Callback"
 const OperationAuthorizeCreateAuthorize = "/api.teslatrack.v1.Authorize/CreateAuthorize"
+const OperationAuthorizeRedirect = "/api.teslatrack.v1.Authorize/Redirect"
 
 type AuthorizeHTTPServer interface {
+	// Callback Callback is the endpoint that the OAuth provider calls after user authorization.
+	// It receives the authorization code needed to exchange for an access token.
 	Callback(context.Context, *CallbackRequest) (*CallbackReply, error)
-	// CreateAuthorize CreateAuthorize creates a new OAuth 2.0 client.
-	// This is typically an administrative operation.
+	// CreateAuthorize CreateAuthorize creates a new OAuth 2.0 client configuration.
+	// This is typically an administrative operation to register a new client.
 	CreateAuthorize(context.Context, *CreateAuthorizeRequest) (*CreateAuthorizeReply, error)
+	// Redirect Redirect generates the authorization URL and redirects the user to the OAuth provider.
+	Redirect(context.Context, *RedirectRequest) (*RedirectReply, error)
 }
 
 func RegisterAuthorizeHTTPServer(s *http.Server, srv AuthorizeHTTPServer) {
 	r := s.Route("/")
 	r.POST("/api/v1/authorize", _Authorize_CreateAuthorize0_HTTP_Handler(srv))
+	r.POST("/api/v1/authorize/redirect", _Authorize_Redirect0_HTTP_Handler(srv))
 	r.GET("/api/v1/authorize/callback", _Authorize_Callback0_HTTP_Handler(srv))
 }
 
@@ -53,6 +59,28 @@ func _Authorize_CreateAuthorize0_HTTP_Handler(srv AuthorizeHTTPServer) func(ctx 
 			return err
 		}
 		reply := out.(*CreateAuthorizeReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Authorize_Redirect0_HTTP_Handler(srv AuthorizeHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in RedirectRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAuthorizeRedirect)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Redirect(ctx, req.(*RedirectRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*RedirectReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -79,6 +107,7 @@ func _Authorize_Callback0_HTTP_Handler(srv AuthorizeHTTPServer) func(ctx http.Co
 type AuthorizeHTTPClient interface {
 	Callback(ctx context.Context, req *CallbackRequest, opts ...http.CallOption) (rsp *CallbackReply, err error)
 	CreateAuthorize(ctx context.Context, req *CreateAuthorizeRequest, opts ...http.CallOption) (rsp *CreateAuthorizeReply, err error)
+	Redirect(ctx context.Context, req *RedirectRequest, opts ...http.CallOption) (rsp *RedirectReply, err error)
 }
 
 type AuthorizeHTTPClientImpl struct {
@@ -107,6 +136,19 @@ func (c *AuthorizeHTTPClientImpl) CreateAuthorize(ctx context.Context, in *Creat
 	pattern := "/api/v1/authorize"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAuthorizeCreateAuthorize))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *AuthorizeHTTPClientImpl) Redirect(ctx context.Context, in *RedirectRequest, opts ...http.CallOption) (*RedirectReply, error) {
+	var out RedirectReply
+	pattern := "/api/v1/authorize/redirect"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAuthorizeRedirect))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
