@@ -12,7 +12,7 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, redirector *Redirector, greeter *service.GreeterService, authorize *service.AuthorizeService, logger log.Logger) *kratoshttp.Server {
+func NewHTTPServer(c *conf.Server, redirector *Redirector, authorize *service.AuthorizeService, logger log.Logger) *kratoshttp.Server {
 	var opts = []kratoshttp.ServerOption{
 		kratoshttp.Middleware(
 			recovery.Recovery(),
@@ -31,7 +31,6 @@ func NewHTTPServer(c *conf.Server, redirector *Redirector, greeter *service.Gree
 	}
 
 	srv := kratoshttp.NewServer(opts...)
-	// v1.RegisterGreeterHTTPServer(srv, greeter)
 	v1.RegisterAuthorizeHTTPServer(srv, authorize)
 
 	return srv

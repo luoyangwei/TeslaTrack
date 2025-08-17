@@ -1,5 +1,6 @@
 server:
   http:
+    hostname: "https://teslatrack.wallora.top"
     addr: 0.0.0.0:8100
     timeout: 1s
   grpc:
@@ -8,6 +9,9 @@ server:
   mux:
     addr: 0.0.0.0:8101
     timeout: 1s
+  tesla:
+    callback: /authorize/callback
+    redirect_url: /
 data:
   # to .env file
   database:

@@ -42,7 +42,7 @@ func TestCreateAuthorize(t *testing.T) {
 		ClientId:     os.Getenv("TESLA_CLIENT_ID"),
 		ClientSecret: os.Getenv("TESLA_CLIENT_SECRET"),
 		GrantType:    "authorization_code",
-		RedirectURI:  "https://teslatrack.luoyangwei.cn/api/v1/authorize/callback",
+		RedirectURI:  "https://teslatrack.wallora.top/api/v1/authorize/callback",
 	}
 
 	request, _ := json.Marshal(body)
@@ -87,6 +87,28 @@ func TestRedirect(t *testing.T) {
 
 	teslaAuthorizeUrl := "https://auth.tesla.cn/oauth2/v3/authorize?&client_id=" + os.Getenv("TESLA_CLIENT_ID") + "&locale=en-US&prompt=login&redirect_uri=" + reply.RedirectUri + "&response_type=code&scope=" + url.QueryEscape(reply.Scope) + "&state=" + reply.State
 	fmt.Println(teslaAuthorizeUrl)
+}
+
+// TestExchangeCode 交换特斯拉回调带过来的Code
+func TestExchangeCode(t *testing.T) {
+	exchangeUrl := "https://auth.tesla.cn/oauth2/v3/token"
+
+	values := url.Values{
+		"grant_type":    []string{"authorization_code"},
+		"client_id":     []string{os.Getenv("TESLA_CLIENT_ID")},
+		"client_secret": []string{os.Getenv("TESLA_CLIENT_SECRET")},
+		"code":          []string{"CN_2749410895cdfd6c743aaa86aabf40b23d814176b33438e859bb7e77afe8"},
+		"audience":      []string{"https://fleet-api.prd.cn.vn.cloud.tesla.cn"},
+		"redirect_uri":  []string{"https://teslatrack.wallora.top/api/v1/authorize/callback"},
+	}
+	response, err := http.PostForm(exchangeUrl, values)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("statusCode: %d, status:%s \n", response.StatusCode, response.Status)
+
+	responseBody, _ := io.ReadAll(response.Body)
+	fmt.Println(string(responseBody))
 }
 
 func TestCallback(t *testing.T) {

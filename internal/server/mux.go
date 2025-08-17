@@ -2,26 +2,28 @@ package server
 
 import (
 	"net/http"
-	v1 "teslatrack/api/helloworld/v1"
-	"teslatrack/internal/service"
+	"teslatrack/internal/biz"
+	"teslatrack/internal/conf"
 )
 
 type Redirector struct {
-	greeter *service.GreeterService
+	authorizeTokenUsecase *biz.AuthorizeTokenUsecase
+	conf                  *conf.Server
 }
 
 func (redirect *Redirector) RedirectFilter(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		redirect.greeter.SayHello(r.Context(), &v1.HelloRequest{Name: "kratos"})
-
-		if r.URL.Path == "/helloworld/kratos" {
-			http.Redirect(w, r, "https://go-kratos.dev/", http.StatusMovedPermanently)
+		if r.URL.Path == redirect.conf.Tesla.Callback {
+			// tesla callback auth code
+			code := r.URL.Query().Get("code")
+			redirect.authorizeTokenUsecase.ExchangeCode(r.Context(), code)
+			//http.Redirect(w, r, redirect.conf.Tesla.RedirectUrl, http.StatusMovedPermanently)
 			return
 		}
 		next.ServeHTTP(w, r)
 	})
 }
 
-func NewRedirector(greeter *service.GreeterService) *Redirector {
-	return &Redirector{greeter}
+func NewRedirector(conf *conf.Server, authorizeTokenUsecase *biz.AuthorizeTokenUsecase) *Redirector {
+	return &Redirector{conf: conf, authorizeTokenUsecase: authorizeTokenUsecase}
 }

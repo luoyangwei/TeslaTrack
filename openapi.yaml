@@ -34,6 +34,7 @@ paths:
             description: |-
                 Callback is the endpoint that the OAuth provider calls after user authorization.
                  It receives the authorization code needed to exchange for an access token.
+                 see: internal/server/mux.go
             operationId: Authorize_Callback
             parameters:
                 - name: code

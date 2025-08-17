@@ -2,7 +2,7 @@ module teslatrack
 
 go 1.23.0
 
-toolchain go1.24.4
+toolchain go1.24.2
 
 require (
 	entgo.io/ent v0.14.5

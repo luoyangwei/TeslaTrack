@@ -12,9 +12,10 @@ message Bootstrap {
 
 message Server {
   message HTTP {
-    string network = 1;
-    string addr = 2;
-    google.protobuf.Duration timeout = 3;
+    string hostname = 1;
+    string network = 2;
+    string addr = 3;
+    google.protobuf.Duration timeout = 4;
   }
   message GRPC {
     string network = 1;
@@ -26,9 +27,14 @@ message Server {
     string addr = 2;
     google.protobuf.Duration timeout = 3;
   }
+  message Tesla {
+    string callback = 1;
+    string redirect_url = 2;
+  }
   HTTP http = 1;
   GRPC grpc = 2;
   Mux mux = 3;
+  Tesla tesla = 4;
 }
 
 message Data {

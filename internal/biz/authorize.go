@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"teslatrack/internal/conf"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -19,6 +20,9 @@ import (
 // - energy_device_data: Access to energy product information (e.g., Powerwall).
 // - energy_cmds: Allows sending commands to energy products.
 const ALL_SCOPES = "openid offline_access user_data vehicle_device_data vehicle_location vehicle_cmds vehicle_charging_cmds energy_device_data energy_cmds"
+
+// TESLA_EXCHANGE_CODE_URL
+const TESLA_EXCHANGE_CODE_URL = "https://auth.tesla.cn/oauth2/v3/token"
 
 // Authorize is the data model for OAuth 2.0 client authorization.
 // It holds the necessary information for a client to obtain an access token.
@@ -47,13 +51,14 @@ type AuthorizeRepo interface {
 // It orchestrates the interaction between the transport layer (e.g., HTTP server) and the data layer (repository).
 type AuthorizeUsecase struct {
 	repo AuthorizeRepo
+	conf *conf.Server
 	log  *log.Helper
 }
 
 // NewAuthorizeUsecase creates a new instance of AuthorizeUsecase.
 // It requires an AuthorizeRepo for data access and a logger for logging.
-func NewAuthorizeUsecase(repo AuthorizeRepo, logger log.Logger) *AuthorizeUsecase {
-	return &AuthorizeUsecase{repo: repo, log: log.NewHelper(logger)}
+func NewAuthorizeUsecase(repo AuthorizeRepo, config *conf.Server, logger log.Logger) *AuthorizeUsecase {
+	return &AuthorizeUsecase{repo: repo, conf: config, log: log.NewHelper(logger)}
 }
 
 // Create is the use case for creating a new authorization.

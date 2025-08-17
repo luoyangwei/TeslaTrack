@@ -2,6 +2,11 @@ package biz
 
 import (
 	"context"
+	"io"
+	"net/http"
+	"net/url"
+	"os"
+	"teslatrack/internal/conf"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -39,12 +44,13 @@ type AuthorizeTokenRepo interface {
 // AuthorizeTokenUsecase provides the business logic for authorization token operations.
 type AuthorizeTokenUsecase struct {
 	repo AuthorizeTokenRepo
+	conf *conf.Server
 	log  *log.Helper
 }
 
 // NewAuthorizeTokenUsecase creates a new instance of AuthorizeTokenUsecase.
-func NewAuthorizeTokenUsecase(repo AuthorizeTokenRepo, logger log.Logger) *AuthorizeTokenUsecase {
-	return &AuthorizeTokenUsecase{repo: repo, log: log.NewHelper(logger)}
+func NewAuthorizeTokenUsecase(repo AuthorizeTokenRepo, config *conf.Server, logger log.Logger) *AuthorizeTokenUsecase {
+	return &AuthorizeTokenUsecase{repo: repo, conf: config, log: log.NewHelper(logger)}
 }
 
 // Create is the use case for creating a new authorization token.
@@ -70,4 +76,25 @@ func (uc *AuthorizeTokenUsecase) FindByAccessToken(ctx context.Context, accessTo
 // Delete is the use case for deleting (soft delete) an authorization token.
 func (uc *AuthorizeTokenUsecase) Delete(ctx context.Context, id int64) error {
 	return uc.repo.Delete(ctx, id)
+}
+
+// ExchangeCode
+func (uc *AuthorizeTokenUsecase) ExchangeCode(ctx context.Context, code string) {
+	// Build formValue
+	values := url.Values{
+		"grant_type":    []string{"authorization_code"},
+		"audience":      []string{"https://fleet-api.prd.cn.vn.cloud.tesla.cn"},
+		"client_id":     []string{os.Getenv("TESLA_CLIENT_ID")},
+		"client_secret": []string{os.Getenv("TESLA_CLIENT_SECRET")},
+		"code":          []string{code},
+		"redirect_uri":  []string{uc.conf.Http.Hostname + uc.conf.Tesla.Callback},
+	}
+	response, err := http.PostForm(TESLA_EXCHANGE_CODE_URL, values)
+	if err != nil {
+		panic(err)
+	}
+
+	uc.log.Infow("msg", "exchange code response", "statusCode", response.StatusCode, "status", response.Status)
+	body, _ := io.ReadAll(response.Body)
+	uc.log.Infof("response body %s", string(body))
 }

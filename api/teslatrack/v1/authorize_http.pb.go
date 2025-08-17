@@ -26,6 +26,7 @@ const OperationAuthorizeRedirect = "/api.teslatrack.v1.Authorize/Redirect"
 type AuthorizeHTTPServer interface {
 	// Callback Callback is the endpoint that the OAuth provider calls after user authorization.
 	// It receives the authorization code needed to exchange for an access token.
+	// see: internal/server/mux.go
 	Callback(context.Context, *CallbackRequest) (*CallbackReply, error)
 	// CreateAuthorize CreateAuthorize creates a new OAuth 2.0 client configuration.
 	// This is typically an administrative operation to register a new client.
