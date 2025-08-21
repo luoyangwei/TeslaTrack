@@ -15,7 +15,7 @@ services:
       # - "LUMBERJACK_BACKUPS=${LUMBERJACK_BACKUPS}"
       # - "LUMBERJACK_MAX_AGE=${LUMBERJACK_MAX_AGE}"
     volumes:
-      - "/data/conf:./configs"
+      - "./configs:/data/conf"
     ports:
       - "8100:8100"
       - "9100:9100"
