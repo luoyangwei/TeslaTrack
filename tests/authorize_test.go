@@ -85,7 +85,7 @@ func TestRedirect(t *testing.T) {
 	_ = json.Unmarshal(responseBody, &reply)
 	fmt.Printf("responseBody: %+v \n\n", reply)
 
-	teslaAuthorizeUrl := "https://auth.tesla.cn/oauth2/v3/authorize?&client_id=" + os.Getenv("TESLA_CLIENT_ID") + "&locale=en-US&prompt=login&redirect_uri=" + reply.RedirectUri + "&response_type=code&scope=" + url.QueryEscape(reply.Scope) + "&state=" + reply.State
+	teslaAuthorizeUrl := "https://auth.tesla.cn/oauth2/v3/authorize?&client_id=" + os.Getenv("TESLA_CLIENT_ID") + "&locale=zh_CN&prompt=login&redirect_uri=" + reply.RedirectUri + "&response_type=code&scope=" + url.QueryEscape(reply.Scope) + "&state=" + reply.State
 	fmt.Println(teslaAuthorizeUrl)
 }
 
