@@ -43,6 +43,10 @@ func NewHTTPServer(
 
 	// Create a new HTTP server.
 	srv := kratoshttp.NewServer(opts...)
+
+	// Register static file server.
+	srv.HandlePrefix("/", NewStaticServer())
+
 	// Register the Authorize service.
 	v1.RegisterAuthorizeHTTPServer(srv, authorize)
 
