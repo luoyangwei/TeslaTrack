@@ -2,7 +2,6 @@ package biz
 
 import (
 	"context"
-	"os"
 	"teslatrack/internal/conf"
 	"teslatrack/pkg/tesla"
 	"time"
@@ -56,8 +55,8 @@ func NewPartnerUsecase(repo PartnerRepo, conf *conf.Server, logger log.Logger) *
 // It ensures that the partner information from Tesla is stored in the database.
 func (uc *PartnerUsecase) Initialize() error {
 	ctx := context.Background()
-	// Get Tesla client credentials from environment variables.
-	clientID, clientSecret := os.Getenv("TESLA_CLIENT_ID"), os.Getenv("TESLA_CLIENT_SECRET")
+	// Get Tesla client credentials from config.
+	clientID, clientSecret := uc.conf.Tesla.ClientId, uc.conf.Tesla.ClientSecret
 	// Try to get the partner from the database.
 	partner, err := uc.repo.MustGet(ctx, clientID)
 	if err != nil {
