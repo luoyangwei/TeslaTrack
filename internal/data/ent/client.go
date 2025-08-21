@@ -13,6 +13,7 @@ import (
 
 	"teslatrack/internal/data/ent/authorize"
 	"teslatrack/internal/data/ent/authorizetoken"
+	"teslatrack/internal/data/ent/partner"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -28,6 +29,8 @@ type Client struct {
 	Authorize *AuthorizeClient
 	// AuthorizeToken is the client for interacting with the AuthorizeToken builders.
 	AuthorizeToken *AuthorizeTokenClient
+	// Partner is the client for interacting with the Partner builders.
+	Partner *PartnerClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -41,6 +44,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Authorize = NewAuthorizeClient(c.config)
 	c.AuthorizeToken = NewAuthorizeTokenClient(c.config)
+	c.Partner = NewPartnerClient(c.config)
 }
 
 type (
@@ -135,6 +139,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:         cfg,
 		Authorize:      NewAuthorizeClient(cfg),
 		AuthorizeToken: NewAuthorizeTokenClient(cfg),
+		Partner:        NewPartnerClient(cfg),
 	}, nil
 }
 
@@ -156,6 +161,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:         cfg,
 		Authorize:      NewAuthorizeClient(cfg),
 		AuthorizeToken: NewAuthorizeTokenClient(cfg),
+		Partner:        NewPartnerClient(cfg),
 	}, nil
 }
 
@@ -186,6 +192,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Authorize.Use(hooks...)
 	c.AuthorizeToken.Use(hooks...)
+	c.Partner.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
@@ -193,6 +200,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Authorize.Intercept(interceptors...)
 	c.AuthorizeToken.Intercept(interceptors...)
+	c.Partner.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -202,6 +210,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Authorize.mutate(ctx, m)
 	case *AuthorizeTokenMutation:
 		return c.AuthorizeToken.mutate(ctx, m)
+	case *PartnerMutation:
+		return c.Partner.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -473,12 +483,145 @@ func (c *AuthorizeTokenClient) mutate(ctx context.Context, m *AuthorizeTokenMuta
 	}
 }
 
+// PartnerClient is a client for the Partner schema.
+type PartnerClient struct {
+	config
+}
+
+// NewPartnerClient returns a client for the Partner from the given config.
+func NewPartnerClient(c config) *PartnerClient {
+	return &PartnerClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `partner.Hooks(f(g(h())))`.
+func (c *PartnerClient) Use(hooks ...Hook) {
+	c.hooks.Partner = append(c.hooks.Partner, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `partner.Intercept(f(g(h())))`.
+func (c *PartnerClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Partner = append(c.inters.Partner, interceptors...)
+}
+
+// Create returns a builder for creating a Partner entity.
+func (c *PartnerClient) Create() *PartnerCreate {
+	mutation := newPartnerMutation(c.config, OpCreate)
+	return &PartnerCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Partner entities.
+func (c *PartnerClient) CreateBulk(builders ...*PartnerCreate) *PartnerCreateBulk {
+	return &PartnerCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PartnerClient) MapCreateBulk(slice any, setFunc func(*PartnerCreate, int)) *PartnerCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PartnerCreateBulk{err: fmt.Errorf("calling to PartnerClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PartnerCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PartnerCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Partner.
+func (c *PartnerClient) Update() *PartnerUpdate {
+	mutation := newPartnerMutation(c.config, OpUpdate)
+	return &PartnerUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PartnerClient) UpdateOne(_m *Partner) *PartnerUpdateOne {
+	mutation := newPartnerMutation(c.config, OpUpdateOne, withPartner(_m))
+	return &PartnerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PartnerClient) UpdateOneID(id int) *PartnerUpdateOne {
+	mutation := newPartnerMutation(c.config, OpUpdateOne, withPartnerID(id))
+	return &PartnerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Partner.
+func (c *PartnerClient) Delete() *PartnerDelete {
+	mutation := newPartnerMutation(c.config, OpDelete)
+	return &PartnerDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PartnerClient) DeleteOne(_m *Partner) *PartnerDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PartnerClient) DeleteOneID(id int) *PartnerDeleteOne {
+	builder := c.Delete().Where(partner.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PartnerDeleteOne{builder}
+}
+
+// Query returns a query builder for Partner.
+func (c *PartnerClient) Query() *PartnerQuery {
+	return &PartnerQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePartner},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Partner entity by its id.
+func (c *PartnerClient) Get(ctx context.Context, id int) (*Partner, error) {
+	return c.Query().Where(partner.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PartnerClient) GetX(ctx context.Context, id int) *Partner {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PartnerClient) Hooks() []Hook {
+	return c.hooks.Partner
+}
+
+// Interceptors returns the client interceptors.
+func (c *PartnerClient) Interceptors() []Interceptor {
+	return c.inters.Partner
+}
+
+func (c *PartnerClient) mutate(ctx context.Context, m *PartnerMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PartnerCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PartnerUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PartnerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PartnerDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Partner mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Authorize, AuthorizeToken []ent.Hook
+		Authorize, AuthorizeToken, Partner []ent.Hook
 	}
 	inters struct {
-		Authorize, AuthorizeToken []ent.Interceptor
+		Authorize, AuthorizeToken, Partner []ent.Interceptor
 	}
 )

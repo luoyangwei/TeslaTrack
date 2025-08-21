@@ -32,6 +32,18 @@ func (f AuthorizeTokenFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AuthorizeTokenMutation", m)
 }
 
+// The PartnerFunc type is an adapter to allow the use of ordinary
+// function as Partner mutator.
+type PartnerFunc func(context.Context, *ent.PartnerMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PartnerFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PartnerMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PartnerMutation", m)
+}
+
 // Condition is a hook condition function.
 type Condition func(context.Context, ent.Mutation) bool
 

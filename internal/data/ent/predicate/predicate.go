@@ -11,3 +11,6 @@ type Authorize func(*sql.Selector)
 
 // AuthorizeToken is the predicate function for authorizetoken builders.
 type AuthorizeToken func(*sql.Selector)
+
+// Partner is the predicate function for partner builders.
+type Partner func(*sql.Selector)

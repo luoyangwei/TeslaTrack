@@ -5,6 +5,7 @@ package ent
 import (
 	"teslatrack/internal/data/ent/authorize"
 	"teslatrack/internal/data/ent/authorizetoken"
+	"teslatrack/internal/data/ent/partner"
 	"teslatrack/internal/data/ent/schema"
 	"time"
 )
@@ -43,4 +44,24 @@ func init() {
 	authorizetokenDescDeleted := authorizetokenFields[8].Descriptor()
 	// authorizetoken.DefaultDeleted holds the default value on creation for the deleted field.
 	authorizetoken.DefaultDeleted = authorizetokenDescDeleted.Default.(bool)
+	partnerFields := schema.Partner{}.Fields()
+	_ = partnerFields
+	// partnerDescTokenType is the schema descriptor for token_type field.
+	partnerDescTokenType := partnerFields[3].Descriptor()
+	// partner.TokenTypeValidator is a validator for the "token_type" field. It is called by the builders before save.
+	partner.TokenTypeValidator = partnerDescTokenType.Validators[0].(func(string) error)
+	// partnerDescCreatedAt is the schema descriptor for created_at field.
+	partnerDescCreatedAt := partnerFields[4].Descriptor()
+	// partner.DefaultCreatedAt holds the default value on creation for the created_at field.
+	partner.DefaultCreatedAt = partnerDescCreatedAt.Default.(func() time.Time)
+	// partnerDescUpdatedAt is the schema descriptor for updated_at field.
+	partnerDescUpdatedAt := partnerFields[5].Descriptor()
+	// partner.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	partner.DefaultUpdatedAt = partnerDescUpdatedAt.Default.(func() time.Time)
+	// partner.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	partner.UpdateDefaultUpdatedAt = partnerDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// partnerDescDeleted is the schema descriptor for deleted field.
+	partnerDescDeleted := partnerFields[6].Descriptor()
+	// partner.DefaultDeleted holds the default value on creation for the deleted field.
+	partner.DefaultDeleted = partnerDescDeleted.Default.(bool)
 }

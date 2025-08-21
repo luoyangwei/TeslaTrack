@@ -15,8 +15,8 @@ server:
 data:
   # to .env file
   database:
-    driver: mysql
-    source: root:root@123@tcp(106.15.37.58:3306)/teslatrack?parseTime=True&loc=Local
+    driver: .env
+    source: .env
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s

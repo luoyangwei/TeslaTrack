@@ -45,10 +45,28 @@ var (
 		Columns:    AuthorizeTokenColumns,
 		PrimaryKey: []*schema.Column{AuthorizeTokenColumns[0]},
 	}
+	// PartnerColumns holds the columns for the "partner" table.
+	PartnerColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "client_id", Type: field.TypeString},
+		{Name: "access_token", Type: field.TypeString, Nullable: true},
+		{Name: "expires_in", Type: field.TypeInt, Nullable: true},
+		{Name: "token_type", Type: field.TypeString, Nullable: true, Size: 125},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted", Type: field.TypeBool, Default: false},
+	}
+	// PartnerTable holds the schema information for the "partner" table.
+	PartnerTable = &schema.Table{
+		Name:       "partner",
+		Columns:    PartnerColumns,
+		PrimaryKey: []*schema.Column{PartnerColumns[0]},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AuthorizeTable,
 		AuthorizeTokenTable,
+		PartnerTable,
 	}
 )
 
@@ -58,5 +76,8 @@ func init() {
 	}
 	AuthorizeTokenTable.Annotation = &entsql.Annotation{
 		Table: "authorize_token",
+	}
+	PartnerTable.Annotation = &entsql.Annotation{
+		Table: "partner",
 	}
 }

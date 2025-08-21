@@ -16,6 +16,8 @@ type Tx struct {
 	Authorize *AuthorizeClient
 	// AuthorizeToken is the client for interacting with the AuthorizeToken builders.
 	AuthorizeToken *AuthorizeTokenClient
+	// Partner is the client for interacting with the Partner builders.
+	Partner *PartnerClient
 
 	// lazily loaded.
 	client     *Client
@@ -149,6 +151,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Authorize = NewAuthorizeClient(tx.config)
 	tx.AuthorizeToken = NewAuthorizeTokenClient(tx.config)
+	tx.Partner = NewPartnerClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

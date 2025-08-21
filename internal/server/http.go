@@ -2,6 +2,7 @@ package server
 
 import (
 	v1 "teslatrack/api/teslatrack/v1"
+	"teslatrack/internal/biz"
 	"teslatrack/internal/conf"
 	"teslatrack/internal/service"
 
@@ -12,14 +13,24 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, redirector *Redirector, authorize *service.AuthorizeService, logger log.Logger) *kratoshttp.Server {
+func NewHTTPServer(
+	c *conf.Server,
+	logger log.Logger,
+	redirector *Redirector,
+	partnerUsecase *biz.PartnerUsecase,
+	authorize *service.AuthorizeService,
+) *kratoshttp.Server {
+	// Define server options.
 	var opts = []kratoshttp.ServerOption{
+		// Add middleware for recovery and logging.
 		kratoshttp.Middleware(
 			recovery.Recovery(),
 			logging.Server(logger),
 		),
+		// Add a filter for redirection.
 		kratoshttp.Filter(redirector.RedirectFilter),
 	}
+	// Set network, address and timeout from config.
 	if c.Http.Network != "" {
 		opts = append(opts, kratoshttp.Network(c.Http.Network))
 	}
@@ -30,8 +41,15 @@ func NewHTTPServer(c *conf.Server, redirector *Redirector, authorize *service.Au
 		opts = append(opts, kratoshttp.Timeout(c.Http.Timeout.AsDuration()))
 	}
 
+	// Create a new HTTP server.
 	srv := kratoshttp.NewServer(opts...)
+	// Register the Authorize service.
 	v1.RegisterAuthorizeHTTPServer(srv, authorize)
+
+	// Initialize partner usecase.
+	if err := partnerUsecase.Initialize(); err != nil {
+		panic(err)
+	}
 
 	return srv
 }

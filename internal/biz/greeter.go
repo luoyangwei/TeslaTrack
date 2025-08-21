@@ -21,10 +21,15 @@ type Greeter struct {
 
 // GreeterRepo is a Greater repo.
 type GreeterRepo interface {
+	// Save saves a Greeter.
 	Save(context.Context, *Greeter) (*Greeter, error)
+	// Update updates a Greeter.
 	Update(context.Context, *Greeter) (*Greeter, error)
+	// FindByID finds a Greeter by id.
 	FindByID(context.Context, int64) (*Greeter, error)
+	// ListByHello lists Greeters by hello.
 	ListByHello(context.Context, string) ([]*Greeter, error)
+	// ListAll lists all Greeters.
 	ListAll(context.Context) ([]*Greeter, error)
 }
 

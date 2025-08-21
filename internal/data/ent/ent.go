@@ -10,6 +10,7 @@ import (
 	"sync"
 	"teslatrack/internal/data/ent/authorize"
 	"teslatrack/internal/data/ent/authorizetoken"
+	"teslatrack/internal/data/ent/partner"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -76,6 +77,7 @@ func checkColumn(t, c string) error {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			authorize.Table:      authorize.ValidColumn,
 			authorizetoken.Table: authorizetoken.ValidColumn,
+			partner.Table:        partner.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

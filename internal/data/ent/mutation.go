@@ -9,6 +9,7 @@ import (
 	"sync"
 	"teslatrack/internal/data/ent/authorize"
 	"teslatrack/internal/data/ent/authorizetoken"
+	"teslatrack/internal/data/ent/partner"
 	"teslatrack/internal/data/ent/predicate"
 	"time"
 
@@ -27,6 +28,7 @@ const (
 	// Node types.
 	TypeAuthorize      = "Authorize"
 	TypeAuthorizeToken = "AuthorizeToken"
+	TypePartner        = "Partner"
 )
 
 // AuthorizeMutation represents an operation that mutates the Authorize nodes in the graph.
@@ -1435,4 +1437,751 @@ func (m *AuthorizeTokenMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *AuthorizeTokenMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown AuthorizeToken edge %s", name)
+}
+
+// PartnerMutation represents an operation that mutates the Partner nodes in the graph.
+type PartnerMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	client_id     *string
+	access_token  *string
+	expires_in    *int
+	addexpires_in *int
+	token_type    *string
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted       *bool
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*Partner, error)
+	predicates    []predicate.Partner
+}
+
+var _ ent.Mutation = (*PartnerMutation)(nil)
+
+// partnerOption allows management of the mutation configuration using functional options.
+type partnerOption func(*PartnerMutation)
+
+// newPartnerMutation creates new mutation for the Partner entity.
+func newPartnerMutation(c config, op Op, opts ...partnerOption) *PartnerMutation {
+	m := &PartnerMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePartner,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPartnerID sets the ID field of the mutation.
+func withPartnerID(id int) partnerOption {
+	return func(m *PartnerMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Partner
+		)
+		m.oldValue = func(ctx context.Context) (*Partner, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Partner.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPartner sets the old Partner of the mutation.
+func withPartner(node *Partner) partnerOption {
+	return func(m *PartnerMutation) {
+		m.oldValue = func(context.Context) (*Partner, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PartnerMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PartnerMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PartnerMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PartnerMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Partner.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetClientID sets the "client_id" field.
+func (m *PartnerMutation) SetClientID(s string) {
+	m.client_id = &s
+}
+
+// ClientID returns the value of the "client_id" field in the mutation.
+func (m *PartnerMutation) ClientID() (r string, exists bool) {
+	v := m.client_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClientID returns the old "client_id" field's value of the Partner entity.
+// If the Partner object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PartnerMutation) OldClientID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldClientID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldClientID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClientID: %w", err)
+	}
+	return oldValue.ClientID, nil
+}
+
+// ResetClientID resets all changes to the "client_id" field.
+func (m *PartnerMutation) ResetClientID() {
+	m.client_id = nil
+}
+
+// SetAccessToken sets the "access_token" field.
+func (m *PartnerMutation) SetAccessToken(s string) {
+	m.access_token = &s
+}
+
+// AccessToken returns the value of the "access_token" field in the mutation.
+func (m *PartnerMutation) AccessToken() (r string, exists bool) {
+	v := m.access_token
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAccessToken returns the old "access_token" field's value of the Partner entity.
+// If the Partner object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PartnerMutation) OldAccessToken(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAccessToken is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAccessToken requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAccessToken: %w", err)
+	}
+	return oldValue.AccessToken, nil
+}
+
+// ClearAccessToken clears the value of the "access_token" field.
+func (m *PartnerMutation) ClearAccessToken() {
+	m.access_token = nil
+	m.clearedFields[partner.FieldAccessToken] = struct{}{}
+}
+
+// AccessTokenCleared returns if the "access_token" field was cleared in this mutation.
+func (m *PartnerMutation) AccessTokenCleared() bool {
+	_, ok := m.clearedFields[partner.FieldAccessToken]
+	return ok
+}
+
+// ResetAccessToken resets all changes to the "access_token" field.
+func (m *PartnerMutation) ResetAccessToken() {
+	m.access_token = nil
+	delete(m.clearedFields, partner.FieldAccessToken)
+}
+
+// SetExpiresIn sets the "expires_in" field.
+func (m *PartnerMutation) SetExpiresIn(i int) {
+	m.expires_in = &i
+	m.addexpires_in = nil
+}
+
+// ExpiresIn returns the value of the "expires_in" field in the mutation.
+func (m *PartnerMutation) ExpiresIn() (r int, exists bool) {
+	v := m.expires_in
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpiresIn returns the old "expires_in" field's value of the Partner entity.
+// If the Partner object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PartnerMutation) OldExpiresIn(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpiresIn is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpiresIn requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpiresIn: %w", err)
+	}
+	return oldValue.ExpiresIn, nil
+}
+
+// AddExpiresIn adds i to the "expires_in" field.
+func (m *PartnerMutation) AddExpiresIn(i int) {
+	if m.addexpires_in != nil {
+		*m.addexpires_in += i
+	} else {
+		m.addexpires_in = &i
+	}
+}
+
+// AddedExpiresIn returns the value that was added to the "expires_in" field in this mutation.
+func (m *PartnerMutation) AddedExpiresIn() (r int, exists bool) {
+	v := m.addexpires_in
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearExpiresIn clears the value of the "expires_in" field.
+func (m *PartnerMutation) ClearExpiresIn() {
+	m.expires_in = nil
+	m.addexpires_in = nil
+	m.clearedFields[partner.FieldExpiresIn] = struct{}{}
+}
+
+// ExpiresInCleared returns if the "expires_in" field was cleared in this mutation.
+func (m *PartnerMutation) ExpiresInCleared() bool {
+	_, ok := m.clearedFields[partner.FieldExpiresIn]
+	return ok
+}
+
+// ResetExpiresIn resets all changes to the "expires_in" field.
+func (m *PartnerMutation) ResetExpiresIn() {
+	m.expires_in = nil
+	m.addexpires_in = nil
+	delete(m.clearedFields, partner.FieldExpiresIn)
+}
+
+// SetTokenType sets the "token_type" field.
+func (m *PartnerMutation) SetTokenType(s string) {
+	m.token_type = &s
+}
+
+// TokenType returns the value of the "token_type" field in the mutation.
+func (m *PartnerMutation) TokenType() (r string, exists bool) {
+	v := m.token_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTokenType returns the old "token_type" field's value of the Partner entity.
+// If the Partner object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PartnerMutation) OldTokenType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTokenType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTokenType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTokenType: %w", err)
+	}
+	return oldValue.TokenType, nil
+}
+
+// ClearTokenType clears the value of the "token_type" field.
+func (m *PartnerMutation) ClearTokenType() {
+	m.token_type = nil
+	m.clearedFields[partner.FieldTokenType] = struct{}{}
+}
+
+// TokenTypeCleared returns if the "token_type" field was cleared in this mutation.
+func (m *PartnerMutation) TokenTypeCleared() bool {
+	_, ok := m.clearedFields[partner.FieldTokenType]
+	return ok
+}
+
+// ResetTokenType resets all changes to the "token_type" field.
+func (m *PartnerMutation) ResetTokenType() {
+	m.token_type = nil
+	delete(m.clearedFields, partner.FieldTokenType)
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PartnerMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PartnerMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Partner entity.
+// If the Partner object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PartnerMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PartnerMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PartnerMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PartnerMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Partner entity.
+// If the Partner object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PartnerMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PartnerMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeleted sets the "deleted" field.
+func (m *PartnerMutation) SetDeleted(b bool) {
+	m.deleted = &b
+}
+
+// Deleted returns the value of the "deleted" field in the mutation.
+func (m *PartnerMutation) Deleted() (r bool, exists bool) {
+	v := m.deleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeleted returns the old "deleted" field's value of the Partner entity.
+// If the Partner object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PartnerMutation) OldDeleted(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeleted is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeleted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
+	}
+	return oldValue.Deleted, nil
+}
+
+// ResetDeleted resets all changes to the "deleted" field.
+func (m *PartnerMutation) ResetDeleted() {
+	m.deleted = nil
+}
+
+// Where appends a list predicates to the PartnerMutation builder.
+func (m *PartnerMutation) Where(ps ...predicate.Partner) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PartnerMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PartnerMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Partner, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PartnerMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PartnerMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Partner).
+func (m *PartnerMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PartnerMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.client_id != nil {
+		fields = append(fields, partner.FieldClientID)
+	}
+	if m.access_token != nil {
+		fields = append(fields, partner.FieldAccessToken)
+	}
+	if m.expires_in != nil {
+		fields = append(fields, partner.FieldExpiresIn)
+	}
+	if m.token_type != nil {
+		fields = append(fields, partner.FieldTokenType)
+	}
+	if m.created_at != nil {
+		fields = append(fields, partner.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, partner.FieldUpdatedAt)
+	}
+	if m.deleted != nil {
+		fields = append(fields, partner.FieldDeleted)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PartnerMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case partner.FieldClientID:
+		return m.ClientID()
+	case partner.FieldAccessToken:
+		return m.AccessToken()
+	case partner.FieldExpiresIn:
+		return m.ExpiresIn()
+	case partner.FieldTokenType:
+		return m.TokenType()
+	case partner.FieldCreatedAt:
+		return m.CreatedAt()
+	case partner.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case partner.FieldDeleted:
+		return m.Deleted()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PartnerMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case partner.FieldClientID:
+		return m.OldClientID(ctx)
+	case partner.FieldAccessToken:
+		return m.OldAccessToken(ctx)
+	case partner.FieldExpiresIn:
+		return m.OldExpiresIn(ctx)
+	case partner.FieldTokenType:
+		return m.OldTokenType(ctx)
+	case partner.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case partner.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case partner.FieldDeleted:
+		return m.OldDeleted(ctx)
+	}
+	return nil, fmt.Errorf("unknown Partner field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PartnerMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case partner.FieldClientID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClientID(v)
+		return nil
+	case partner.FieldAccessToken:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAccessToken(v)
+		return nil
+	case partner.FieldExpiresIn:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpiresIn(v)
+		return nil
+	case partner.FieldTokenType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTokenType(v)
+		return nil
+	case partner.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case partner.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case partner.FieldDeleted:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeleted(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Partner field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PartnerMutation) AddedFields() []string {
+	var fields []string
+	if m.addexpires_in != nil {
+		fields = append(fields, partner.FieldExpiresIn)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PartnerMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case partner.FieldExpiresIn:
+		return m.AddedExpiresIn()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PartnerMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case partner.FieldExpiresIn:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddExpiresIn(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Partner numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PartnerMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(partner.FieldAccessToken) {
+		fields = append(fields, partner.FieldAccessToken)
+	}
+	if m.FieldCleared(partner.FieldExpiresIn) {
+		fields = append(fields, partner.FieldExpiresIn)
+	}
+	if m.FieldCleared(partner.FieldTokenType) {
+		fields = append(fields, partner.FieldTokenType)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PartnerMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PartnerMutation) ClearField(name string) error {
+	switch name {
+	case partner.FieldAccessToken:
+		m.ClearAccessToken()
+		return nil
+	case partner.FieldExpiresIn:
+		m.ClearExpiresIn()
+		return nil
+	case partner.FieldTokenType:
+		m.ClearTokenType()
+		return nil
+	}
+	return fmt.Errorf("unknown Partner nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PartnerMutation) ResetField(name string) error {
+	switch name {
+	case partner.FieldClientID:
+		m.ResetClientID()
+		return nil
+	case partner.FieldAccessToken:
+		m.ResetAccessToken()
+		return nil
+	case partner.FieldExpiresIn:
+		m.ResetExpiresIn()
+		return nil
+	case partner.FieldTokenType:
+		m.ResetTokenType()
+		return nil
+	case partner.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case partner.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case partner.FieldDeleted:
+		m.ResetDeleted()
+		return nil
+	}
+	return fmt.Errorf("unknown Partner field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PartnerMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PartnerMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PartnerMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PartnerMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PartnerMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PartnerMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PartnerMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Partner unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PartnerMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Partner edge %s", name)
 }
