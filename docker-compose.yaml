@@ -9,15 +9,13 @@ services:
       - path: .env
         required: true
     environment:
-      - "DATABASE_DRIVER=${DATABASE_DRIVER}"
-      - "DATABASE_SOURCE=${DATABASE_SOURCE}"
-      - "TESLA_CLIENT_ID=${TESLA_CLIENT_ID}"
-      - "TESLA_CLIENT_SECRET=${TESLA_CLIENT_SECRET}"
       - "LUMBERJACK_ENABLE=${LUMBERJACK_ENABLE}"
       # - "LUMBERJACK_FILE_NAME=${LUMBERJACK_FILE_NAME}"
       # - "LUMBERJACK_MAX_SIZE=${LUMBERJACK_MAX_SIZE}"
       # - "LUMBERJACK_BACKUPS=${LUMBERJACK_BACKUPS}"
       # - "LUMBERJACK_MAX_AGE=${LUMBERJACK_MAX_AGE}"
+    volumes:
+      - "/data/conf:./configs"
     ports:
       - "8100:8100"
       - "9100:9100"
