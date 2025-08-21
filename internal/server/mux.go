@@ -17,7 +17,7 @@ func (redirect *Redirector) RedirectFilter(next http.Handler) http.Handler {
 			// tesla callback auth code
 			code := r.URL.Query().Get("code")
 			redirect.authorizeTokenUsecase.ExchangeCode(r.Context(), code)
-			//http.Redirect(w, r, redirect.conf.Tesla.RedirectUrl, http.StatusMovedPermanently)
+			http.ServeFile(w, r, "web/hello.html")
 			return
 		}
 		next.ServeHTTP(w, r)
