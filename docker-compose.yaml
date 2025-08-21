@@ -6,7 +6,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     env_file:
-      - path: ./
+      - path: .env
         required: true
     environment:
       - "DATABASE_DRIVER=${DATABASE_DRIVER}"
