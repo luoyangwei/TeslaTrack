@@ -21,4 +21,4 @@ EXPOSE 8100
 EXPOSE 9100
 VOLUME /data/conf
 
-CMD ["./server", "-conf", "/data/conf"]
+CMD ["./teslatrack", "-conf", "/data/conf"]
