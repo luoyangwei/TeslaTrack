@@ -39,3 +39,6 @@ bin/
 *.swp
 __debug_bin*
 .env
+.env.*
+
+configs/*
