@@ -7,10 +7,12 @@ import (
 
 var _ biz.VehicleRepo = (*vehicleRepo)(nil)
 
+// vehicleRepo is the data layer implementation of VehicleRepo.
 type vehicleRepo struct {
 	data *Data
 }
 
+// NewVehicleRepo creates a new vehicleRepo.
 func NewVehicleRepo(data *Data) biz.VehicleRepo {
 	return &vehicleRepo{data}
 }
