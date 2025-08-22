@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
@@ -15,7 +17,19 @@ type User struct {
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
+		field.String("account").Comment("账号"),
+		field.String("password"),
 		field.String("mobile").Optional(),
+		field.String("open_id").Optional(),
+		field.String("avatar").Optional(),
+		field.String("nick_name").Optional(),
+		field.String("introduction").Optional(),
+		field.Int8("gender").Nillable().Default(0),
+		field.Int("asked_user_id").Optional(),
+		field.String("area_code").Optional(),
+		field.Time("created_at").Default(time.Now).Immutable(),
+		field.Time("updated_at").Default(time.Now).UpdateDefault(time.Now),
+		field.Bool("deleted").Default(false),
 	}
 }
 

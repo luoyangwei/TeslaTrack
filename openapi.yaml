@@ -68,6 +68,69 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/api.teslatrack.v1.RedirectReply'
+    /api/v1/signin/identifier:
+        post:
+            tags:
+                - Signin
+            description: |-
+                Identifier provides a method to sign in with account and password.
+                 Maps to HTTP POST /api/v1/signin/identifier
+            operationId: Signin_Identifier
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.teslatrack.v1.IdentifierRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.teslatrack.v1.IdentifierReply'
+    /api/v1/signup/create:
+        post:
+            tags:
+                - Signup
+            description: |-
+                Creates a new signup request.
+                 Maps to HTTP POST /api/v1/signup/create
+            operationId: Signup_CreateSignup
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/api.teslatrack.v1.CreateSignupRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.teslatrack.v1.CreateSignupReply'
+    /api/v1/signup/verify:
+        get:
+            tags:
+                - Signup
+            description: |-
+                Verifies if a signup account already exists.
+                 Maps to HTTP GET /api/v1/signup/verify
+            operationId: Signup_VerifySignup
+            parameters:
+                - name: account
+                  in: query
+                  description: The user's account to verify.
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/api.teslatrack.v1.VerifySignupReply'
     /helloworld/{name}:
         get:
             tags:
@@ -113,6 +176,46 @@ components:
                     type: string
                     description: The URI to redirect to after authorization.
             description: The request message for creating a new authorization client.
+        api.teslatrack.v1.CreateSignupReply:
+            type: object
+            properties: {}
+            description: The response message for creating a new signup.
+        api.teslatrack.v1.CreateSignupRequest:
+            type: object
+            properties:
+                account:
+                    type: string
+                    description: The user's account.
+                password:
+                    type: string
+                    description: The user's password.
+                askedCode:
+                    type: string
+                    description: The invitation code.
+            description: The request message for creating a new signup.
+        api.teslatrack.v1.IdentifierReply:
+            type: object
+            properties:
+                accessToken:
+                    type: string
+                    description: The access token for the session.
+                refreshToken:
+                    type: string
+                    description: The refresh token to get a new access token.
+                expireAt:
+                    type: string
+                    description: The expiration time of the access token.
+            description: The response message containing the access token and other details.
+        api.teslatrack.v1.IdentifierRequest:
+            type: object
+            properties:
+                account:
+                    type: string
+                    description: The user's account.
+                password:
+                    type: string
+                    description: The user's password.
+            description: The request message containing the user's credentials.
         api.teslatrack.v1.RedirectReply:
             type: object
             properties:
@@ -142,6 +245,13 @@ components:
                     type: string
                     description: The client ID for which to initiate the authorization flow.
             description: The request message for initiating an authorization redirect.
+        api.teslatrack.v1.VerifySignupReply:
+            type: object
+            properties:
+                isRepeated:
+                    type: boolean
+                    description: Indicates if the account is already registered.
+            description: The response message for verifying a signup.
         helloworld.v1.HelloReply:
             type: object
             properties:
@@ -153,3 +263,7 @@ tags:
       description: The Authorize service provides methods for managing the OAuth 2.0 authorization flow.
     - name: Greeter
       description: The greeting service definition.
+    - name: Signin
+      description: The Signin service definition.
+    - name: Signup
+      description: The Signup service definition.

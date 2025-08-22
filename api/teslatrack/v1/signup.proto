@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package api.teslatrack.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "teslatrack/api/teslatrack/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.teslatrack.v1";
+
+// The Signup service definition.
+service Signup {
+	// Creates a new signup request.
+    // Maps to HTTP POST /api/v1/signup/create
+	rpc CreateSignup (CreateSignupRequest) returns (CreateSignupReply) {
+        option (google.api.http) = {
+            post: "/api/v1/signup/create",
+            body: "*"
+        };
+    };
+    // Verifies if a signup account already exists.
+    // Maps to HTTP GET /api/v1/signup/verify
+    rpc VerifySignup (VerifySignupRequest) returns (VerifySignupReply) {
+        option (google.api.http) = {
+            get: "/api/v1/signup/verify",
+        };
+    };
+}
+
+// The request message for creating a new signup.
+message CreateSignupRequest {
+    // The user's account.
+    string account = 1;
+    // The user's password.
+    string password = 2;
+    // The invitation code.
+    string asked_code = 3;
+}
+// The response message for creating a new signup.
+message CreateSignupReply {}
+
+// The request message for verifying a signup.
+message VerifySignupRequest {
+    // The user's account to verify.
+    string account = 1;
+}
+
+// The response message for verifying a signup.
+message VerifySignupReply {
+    // Indicates if the account is already registered.
+    bool is_repeated = 1;
+}

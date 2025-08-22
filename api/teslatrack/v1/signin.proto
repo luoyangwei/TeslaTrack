@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package api.teslatrack.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "teslatrack/api/teslatrack/v1;v1";
+option java_multiple_files = true;
+option java_package = "api.teslatrack.v1";
+
+// The Signin service definition.
+service Signin {
+    
+    // Identifier provides a method to sign in with account and password.
+    // Maps to HTTP POST /api/v1/signin/identifier
+	rpc Identifier (IdentifierRequest) returns (IdentifierReply) {
+        option (google.api.http) = {
+            post: "/api/v1/signin/identifier",
+            body: "*"
+        };
+    }
+
+    // Wechat 
+    // rpc Wechat (WechatRequest) returns (WechatReply) {
+    //     option (google.api.http) = {
+    //         post: "/api/v1/signin/wechat",
+    //         body: "*"
+    //     };
+    // }
+}
+
+// The request message containing the user's credentials.
+message IdentifierRequest {
+    // The user's account.
+    string account = 1;
+    // The user's password.
+    string password = 2;
+}
+
+// The response message containing the access token and other details.
+message IdentifierReply {
+    // The access token for the session.
+    string access_token = 1;
+    // The refresh token to get a new access token.
+    string refresh_token = 2;
+    // The expiration time of the access token.
+    int64 expire_at = 3;
+}
+
+// message WechatRequest {}
+// message WechatReply {}
