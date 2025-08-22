@@ -11,6 +11,8 @@ import (
 	"teslatrack/internal/data/ent/authorize"
 	"teslatrack/internal/data/ent/authorizetoken"
 	"teslatrack/internal/data/ent/partner"
+	"teslatrack/internal/data/ent/user"
+	"teslatrack/internal/data/ent/vehicle"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -78,6 +80,8 @@ func checkColumn(t, c string) error {
 			authorize.Table:      authorize.ValidColumn,
 			authorizetoken.Table: authorizetoken.ValidColumn,
 			partner.Table:        partner.ValidColumn,
+			user.Table:           user.ValidColumn,
+			vehicle.Table:        vehicle.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

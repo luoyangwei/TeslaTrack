@@ -62,11 +62,59 @@ var (
 		Columns:    PartnerColumns,
 		PrimaryKey: []*schema.Column{PartnerColumns[0]},
 	}
+	// UserColumns holds the columns for the "user" table.
+	UserColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "account", Type: field.TypeString},
+		{Name: "password", Type: field.TypeString},
+		{Name: "mobile", Type: field.TypeString, Nullable: true},
+		{Name: "open_id", Type: field.TypeString, Nullable: true},
+		{Name: "avatar", Type: field.TypeString, Nullable: true},
+		{Name: "nick_name", Type: field.TypeString, Nullable: true},
+		{Name: "introduction", Type: field.TypeString, Nullable: true},
+		{Name: "gender", Type: field.TypeInt8, Default: 0},
+		{Name: "asked_user_id", Type: field.TypeInt, Nullable: true},
+		{Name: "area_code", Type: field.TypeString, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted", Type: field.TypeBool, Default: false},
+	}
+	// UserTable holds the schema information for the "user" table.
+	UserTable = &schema.Table{
+		Name:       "user",
+		Columns:    UserColumns,
+		PrimaryKey: []*schema.Column{UserColumns[0]},
+	}
+	// VehicleColumns holds the columns for the "vehicle" table.
+	VehicleColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "vin", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeInt},
+		{Name: "display_name", Type: field.TypeString},
+		{Name: "access_type", Type: field.TypeString},
+		{Name: "state", Type: field.TypeInt8},
+		{Name: "in_service", Type: field.TypeInt8, Default: 0},
+		{Name: "calendar_enabled", Type: field.TypeInt8, Default: 0},
+		{Name: "car_type", Type: field.TypeString, Nullable: true},
+		{Name: "api_version", Type: field.TypeString, Nullable: true},
+		{Name: "raw_data", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted", Type: field.TypeBool, Default: false},
+	}
+	// VehicleTable holds the schema information for the "vehicle" table.
+	VehicleTable = &schema.Table{
+		Name:       "vehicle",
+		Columns:    VehicleColumns,
+		PrimaryKey: []*schema.Column{VehicleColumns[0]},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AuthorizeTable,
 		AuthorizeTokenTable,
 		PartnerTable,
+		UserTable,
+		VehicleTable,
 	}
 )
 
@@ -79,5 +127,11 @@ func init() {
 	}
 	PartnerTable.Annotation = &entsql.Annotation{
 		Table: "partner",
+	}
+	UserTable.Annotation = &entsql.Annotation{
+		Table: "user",
+	}
+	VehicleTable.Annotation = &entsql.Annotation{
+		Table: "vehicle",
 	}
 }

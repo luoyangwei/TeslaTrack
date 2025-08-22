@@ -14,3 +14,9 @@ type AuthorizeToken func(*sql.Selector)
 
 // Partner is the predicate function for partner builders.
 type Partner func(*sql.Selector)
+
+// User is the predicate function for user builders.
+type User func(*sql.Selector)
+
+// Vehicle is the predicate function for vehicle builders.
+type Vehicle func(*sql.Selector)

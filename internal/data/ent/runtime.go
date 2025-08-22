@@ -7,6 +7,8 @@ import (
 	"teslatrack/internal/data/ent/authorizetoken"
 	"teslatrack/internal/data/ent/partner"
 	"teslatrack/internal/data/ent/schema"
+	"teslatrack/internal/data/ent/user"
+	"teslatrack/internal/data/ent/vehicle"
 	"time"
 )
 
@@ -64,4 +66,52 @@ func init() {
 	partnerDescDeleted := partnerFields[6].Descriptor()
 	// partner.DefaultDeleted holds the default value on creation for the deleted field.
 	partner.DefaultDeleted = partnerDescDeleted.Default.(bool)
+	userFields := schema.User{}.Fields()
+	_ = userFields
+	// userDescGender is the schema descriptor for gender field.
+	userDescGender := userFields[7].Descriptor()
+	// user.DefaultGender holds the default value on creation for the gender field.
+	user.DefaultGender = userDescGender.Default.(int8)
+	// userDescCreatedAt is the schema descriptor for created_at field.
+	userDescCreatedAt := userFields[10].Descriptor()
+	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
+	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
+	// userDescUpdatedAt is the schema descriptor for updated_at field.
+	userDescUpdatedAt := userFields[11].Descriptor()
+	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
+	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// userDescDeleted is the schema descriptor for deleted field.
+	userDescDeleted := userFields[12].Descriptor()
+	// user.DefaultDeleted holds the default value on creation for the deleted field.
+	user.DefaultDeleted = userDescDeleted.Default.(bool)
+	vehicleFields := schema.Vehicle{}.Fields()
+	_ = vehicleFields
+	// vehicleDescVin is the schema descriptor for vin field.
+	vehicleDescVin := vehicleFields[0].Descriptor()
+	// vehicle.VinValidator is a validator for the "vin" field. It is called by the builders before save.
+	vehicle.VinValidator = vehicleDescVin.Validators[0].(func(string) error)
+	// vehicleDescInService is the schema descriptor for in_service field.
+	vehicleDescInService := vehicleFields[5].Descriptor()
+	// vehicle.DefaultInService holds the default value on creation for the in_service field.
+	vehicle.DefaultInService = vehicleDescInService.Default.(int8)
+	// vehicleDescCalendarEnabled is the schema descriptor for calendar_enabled field.
+	vehicleDescCalendarEnabled := vehicleFields[6].Descriptor()
+	// vehicle.DefaultCalendarEnabled holds the default value on creation for the calendar_enabled field.
+	vehicle.DefaultCalendarEnabled = vehicleDescCalendarEnabled.Default.(int8)
+	// vehicleDescCreatedAt is the schema descriptor for created_at field.
+	vehicleDescCreatedAt := vehicleFields[10].Descriptor()
+	// vehicle.DefaultCreatedAt holds the default value on creation for the created_at field.
+	vehicle.DefaultCreatedAt = vehicleDescCreatedAt.Default.(func() time.Time)
+	// vehicleDescUpdatedAt is the schema descriptor for updated_at field.
+	vehicleDescUpdatedAt := vehicleFields[11].Descriptor()
+	// vehicle.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	vehicle.DefaultUpdatedAt = vehicleDescUpdatedAt.Default.(func() time.Time)
+	// vehicle.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	vehicle.UpdateDefaultUpdatedAt = vehicleDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// vehicleDescDeleted is the schema descriptor for deleted field.
+	vehicleDescDeleted := vehicleFields[12].Descriptor()
+	// vehicle.DefaultDeleted holds the default value on creation for the deleted field.
+	vehicle.DefaultDeleted = vehicleDescDeleted.Default.(bool)
 }
